@@ -1,5 +1,7 @@
 from os import environ
+from typing import Any
 
+from dotenv import load_dotenv
 from pydantic import BaseSettings
 
 
@@ -9,10 +11,17 @@ class ConfigSettings(BaseSettings):
     Settings will be loaded from env
     """
 
+    def __init__(self, **values: Any):
+        super().__init__(**values)
+        load_dotenv()
+
     ENV: str = environ.get("ENV", "local")
     PATH_PREFIX: str = environ.get("PATH_PREFIX", "/api/v1")
     APP_HOST: str = environ.get("APP_HOST", "http://127.0.0.1")
     APP_PORT: int = int(environ.get("APP_PORT", 8000))
+
+    SMSAERO_EMAIL: str = environ.get("SMSAERO_EMAIL", "email")
+    SMSAERO_KEY: str = environ.get("SMSAERO_KEY", "key")
 
     POSTGRES_DB: str = environ.get("POSTGRES_DB", "quick-wallet")
     POSTGRES_HOST: str = environ.get("POSTGRES_HOST", "localhost")
