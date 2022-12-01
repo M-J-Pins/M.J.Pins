@@ -28,4 +28,11 @@ object Versions {
     const val junit = "4.13.2"
     const val extJunit = "1.1.3"
     const val espressoCore = "3.4.0"
+    //barcode-reader
+    const val barcodeScanning = "17.0.2"
+    //camera
+    const val camerax = "1.0.1"
+    const val cameraView = "1.0.0-alpha28"
+    const val cameraCore = "1.0.2"
+    const val cameraPermission = "0.20.0"
 }

@@ -14,7 +14,6 @@ object AppDependencies {
 
     //android ui
     private const val coreKtx = "androidx.core:core-ktx:${Versions.coreKtx}"
-//    private const val composeCompiler = "androidx.compose.compiler:compiler:${Versions.compose}"
     private const val lifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
     private const val composeUI = "androidx.compose.ui:ui:${Versions.compose}"
     private const val composeMaterial = "androidx.compose.material:material:${Versions.compose}"
@@ -39,11 +38,19 @@ object AppDependencies {
     private const val espressoCore = "androidx.test.espresso:espresso-core:${Versions.espressoCore}"
     private const val composeJunit = "androidx.compose.ui:ui-test-junit4:${Versions.compose}"
 
+    //barcode=reader
+    private const val barcodeScanning = "com.google.mlkit:barcode-scanning:${Versions.barcodeScanning}"
+    //camera
+    private const val camera = "androidx.camera:camera-camera2:${Versions.camerax}"
+    private const val cameraLifeCycle = "androidx.camera:camera-lifecycle:${Versions.camerax}"
+    private const val cameraView = "androidx.camera:camera-view:${Versions.cameraView}"
+    private const val cameraCore = "androidx.camera:camera-core:${Versions.cameraCore}"
+    private const val cameraPermission = "com.google.accompanist:accompanist-permissions:${Versions.cameraPermission}"
+
     val appLibs = listOf(
         kotlinStdLib,
         coreKtx,
         lifecycle,
-//        composeCompiler,
         composeUI,
         composeMaterial,
         composeMaterialIconsExtended,
@@ -58,7 +65,13 @@ object AppDependencies {
         ktorResource,
         ktorNegotiation,
         composeViewModel,
-        ktorJson
+        ktorJson,
+        barcodeScanning,
+        camera,
+        cameraCore,
+        cameraView,
+        cameraLifeCycle,
+        cameraPermission
     )
 
     val kaptLibs = listOf(hiltCompiler)
