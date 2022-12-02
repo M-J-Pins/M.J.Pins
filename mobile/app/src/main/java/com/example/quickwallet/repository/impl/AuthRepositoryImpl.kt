@@ -8,6 +8,8 @@ import com.example.quickwallet.network.auth.AuthService
 import com.example.quickwallet.network.model.AuthDataDto
 import com.example.quickwallet.network.model.PhoneNumberDto
 import com.example.quickwallet.repository.AuthRepository
+import javax.inject.Inject
+import javax.inject.Singleton
 
 class AuthRepositoryImpl(
     private val authService: AuthService,

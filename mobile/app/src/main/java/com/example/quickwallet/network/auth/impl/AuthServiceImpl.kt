@@ -12,8 +12,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class AuthServiceImpl: AuthService {
-    private val retrofit: AuthApi = ServiceBuilder.buildService(AuthApi::class.java)
+class AuthServiceImpl constructor(
+    private val retrofit: AuthApi
+): AuthService {
+
     override suspend fun phoneAuthRequest(phoneNumber: PhoneNumberDto): String? {
         var description: String? = null
         retrofit.phoneAuthRequest(phoneNumber).enqueue(
@@ -35,7 +37,6 @@ class AuthServiceImpl: AuthService {
         retrofit.phoneAuth(authData).enqueue(
             object : Callback<AuthPhoneResponse> {
                 override fun onFailure(call: Call<AuthPhoneResponse>, t: Throwable) {
-                    token = null
                     (if (token != null) token else "cannot get token")?.let {
                         Log.d(
                             Constants.authLogTag,

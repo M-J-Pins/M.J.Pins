@@ -20,6 +20,7 @@ object AppDependencies {
 
     //navigation
     private const val navigation = "androidx.navigation:navigation-compose:${Versions.nav}"
+    private const val hiltNavigation = "androidx.hilt:hilt-navigation-compose:1.0.0"
 
     //Dependency Injection
     private const val hilt = "com.google.dagger:hilt-android:${Versions.hilt}"
@@ -42,8 +43,10 @@ object AppDependencies {
     private const val cameraCore = "androidx.camera:camera-core:${Versions.cameraCore}"
 
     //accompanist
-    private const val cameraPermission =
-        "com.google.accompanist:accompanist-permissions:${Versions.cameraPermission}"
+    private const val permissions =
+        "com.google.accompanist:accompanist-permissions:${Versions.accompanist}"
+    private const val animatedNavigation = "com.google.accompanist:accompanist-navigation-animation:${Versions.accompanist}"
+
 
     //retrofit
     private const val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
@@ -67,9 +70,11 @@ object AppDependencies {
         cameraCore,
         cameraView,
         cameraLifeCycle,
-        cameraPermission,
+        permissions,
         retrofit,
-        retrofitGson
+        retrofitGson,
+        hiltNavigation,
+        animatedNavigation
     )
 
     val kaptLibs = listOf(hiltCompiler)

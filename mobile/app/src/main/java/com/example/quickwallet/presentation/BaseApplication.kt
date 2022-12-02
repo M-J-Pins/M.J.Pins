@@ -1,4 +1,4 @@
-package com.example.quickwallet
+package com.example.quickwallet.presentation
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

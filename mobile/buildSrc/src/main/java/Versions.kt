@@ -30,7 +30,7 @@ object Versions {
     const val cameraCore = "1.0.2"
 
     //accompanist
-    const val cameraPermission = "0.23.1"
+    const val accompanist = "0.23.1"
 
     //retrofit2
     const val retrofit = "2.9.0"
