@@ -2,6 +2,8 @@ package com.example.quickwallet
 
 import BarCodeAnalyser
 import android.Manifest
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.ViewGroup
@@ -13,14 +15,8 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,13 +27,19 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import com.example.quickwallet.domain.model.AuthData
+import com.example.quickwallet.domain.model.PhoneNumber
+import com.example.quickwallet.network.auth.impl.AuthServiceImpl
+import com.example.quickwallet.network.model.AuthDataMapper
+import com.example.quickwallet.network.model.PhoneNumberMapper
+import com.example.quickwallet.repository.impl.AuthRepositoryImpl
 import com.google.common.util.concurrent.ListenableFuture
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionRequired
 import com.google.accompanist.permissions.rememberPermissionState
 import com.example.quickwallet.ui.theme.QuickWalletTheme
+import kotlinx.coroutines.launch
 
 @ExperimentalPermissionsApi
 class MainActivity : ComponentActivity() {
@@ -49,41 +51,80 @@ class MainActivity : ComponentActivity() {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        val cameraPermissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
-
-                        Button(
-                            onClick = {
-                                cameraPermissionState.launchPermissionRequest()
-                            }
-                        ) {
-                            Text(text = "Camera Permission")
+                        var phone by remember {
+                            mutableStateOf("")
+                        }
+                        var code by remember {
+                            mutableStateOf("")
+                        }
+                        var isPhoneSended by remember {
+                            mutableStateOf(false)
+                        }
+                        var isPhoneSuccess by remember {
+                            mutableStateOf(false)
                         }
 
-                        Spacer(modifier = Modifier.height(10.dp))
+                        val authRepository = AuthRepositoryImpl(AuthServiceImpl(),AuthDataMapper(),PhoneNumberMapper())
+                        val scope = rememberCoroutineScope()
+                        val context = LocalContext.current
+                        val networkPermission = rememberPermissionState(permission = Manifest.permission.INTERNET)
 
-                        CameraPreview()
+                        TextField(value = phone, onValueChange = {phone = it}, enabled = !isPhoneSended)
+                        Spacer(modifier = Modifier.height(10.dp))
+                        if (!isPhoneSended) {
+                            Button(onClick = {
+                                isPhoneSended = !isPhoneSended
+                                networkPermission.launchPermissionRequest()
+                                scope.launch {
+                                    authRepository.phoneAuthRequest(PhoneNumber(phone))
+                                }
+                            }) {
+                                Text(text = "send phone")
+                            }
+                        } else {
+                            TextField(value = code, onValueChange = {code = it})
+                            Button(onClick = {
+                                isPhoneSended = !isPhoneSended
+                                scope.launch {
+                                    val token = authRepository.phoneAuth(AuthData(phone,code))
+                                    token?.let {
+                                        Toast.makeText(context , token, Toast.LENGTH_LONG).show()
+                                    }
+                                }
+                            }) {
+                                Text(text = "send phone")
+                            }
+                        }
+
+                        
+                        
+                        
                     }
                 }
             }
         }
     }
 }
-
+//Spacer(modifier = Modifier.height(10.dp))
+//
+//val cameraPermissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
+//
+//Button(
+//onClick = {
+//    cameraPermissionState.launchPermissionRequest()
+//}
+//) {
+//    Text(text = "Camera Permission")
+//}
+//
+//Spacer(modifier = Modifier.height(10.dp))
+//
+//CameraPreview()
 
 @Composable
 fun Greeting(name: String) {
     Text(text = "Hello $name!")
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun DefaultPreview() {
-//    QuickWalletTheme {
-//        Greeting("Android")
-//    }
-//}
 
 @Composable
 fun CameraPreview() {

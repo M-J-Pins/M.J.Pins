@@ -2,14 +2,15 @@ plugins {
     id("com.android.application")
     kotlin("android")
     kotlin("kapt")
-    kotlin("plugin.serialization")
     id("dagger.hilt.android.plugin")
 }
 apply {
     plugin("kotlin-android")
+    plugin("kotlin-android-extensions")
 }
 
 android {
+
     compileSdk = Config.compileSdk
 
     defaultConfig {
