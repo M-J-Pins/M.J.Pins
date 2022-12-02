@@ -39,9 +39,11 @@ import java.util.concurrent.Executors
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.example.quickwallet.ui.theme.QuickWalletTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @ExperimentalPermissionsApi
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,9 +60,6 @@ class MainActivity : ComponentActivity() {
                             mutableStateOf("")
                         }
                         var isPhoneSended by remember {
-                            mutableStateOf(false)
-                        }
-                        var isPhoneSuccess by remember {
                             mutableStateOf(false)
                         }
 
