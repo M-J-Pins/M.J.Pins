@@ -31,7 +31,7 @@ class JWTManager:
         self,
         id_to_jwt: UUID = None,
         data: dict = {},
-        active_period: timedelta = timedelta(seconds=0),
+        active_period: timedelta = timedelta(days=30),
     ) -> str:
         data["id"] = str(id_to_jwt)
 
@@ -42,9 +42,10 @@ class JWTManager:
 
     def id_from_jwt(self, client_jwt: str) -> UUID:
         try:
-            id_from_jwt = jwt.encode(client_jwt, self.secret, algorithm=self.algo).get(
+            id_from_jwt = jwt.decode(client_jwt.encode(), self.secret, algorithms=[self.algo]).get(
                 "id", None
             )
-        except jwt.exceptions.DecodeError:
+        except jwt.exceptions.DecodeError as e:
+            print(e)
             id_from_jwt = None
         return id_from_jwt

@@ -1,13 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, Body
+from fastapi import APIRouter, Body, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from quick_wallet.database.connection import get_session
-from quick_wallet.schemas.auth import PhoneAuthRequestRequest, AuthRequestResponse
-from quick_wallet.services.auth import AuthManager, AuthActionResult
+from quick_wallet.schemas.auth import AuthRequestResponse, PhoneAuthRequestRequest
+from quick_wallet.services.auth import AuthActionResult, AuthManager
 
-
-api_router = APIRouter(prefix='/auth')
+api_router = APIRouter(prefix="/auth")
 
 
 @api_router.post(

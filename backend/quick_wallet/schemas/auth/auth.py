@@ -9,8 +9,8 @@ class PhoneAuthRequestRequest(BaseModel):
 
     @validator("phone")
     def validate_phone(cls, phone):
-        new_phone = [p if p.isdigit() else '' for p in phone]
-        return ''.join(new_phone)
+        new_phone = [p if p.isdigit() else "" for p in phone]
+        return "".join(new_phone)
 
     class Config:
         orm_mode = True
@@ -25,8 +25,8 @@ class PhoneAuthRequest(BaseModel):
 
     @validator("phone")
     def validate_phone(cls, phone):
-        new_phone = [p if p.isdigit() else '' for p in phone]
-        return ''.join(new_phone)
+        new_phone = [p if p.isdigit() else "" for p in phone]
+        return "".join(new_phone)
 
     class Config:
         orm_mode = True

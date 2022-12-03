@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
 from enum import Enum
 from typing import Union
 
@@ -7,7 +7,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from quick_wallet.database.models import User, VerificationCode
-from quick_wallet.services.auth.verification.phone_verification_manager import PhoneVerificationManager
+from quick_wallet.services.auth.verification.phone_verification_manager import (
+    PhoneVerificationManager,
+)
 from quick_wallet.services.misc.jwt_manager import JWTManager
 from quick_wallet.utils.datetime import check_datetime_expired
 
@@ -28,7 +30,6 @@ async def check_cooldown_expired(db: AsyncSession, receiver: str) -> bool:
 
 @singleton
 class AuthManager:
-
     @staticmethod
     async def phone_auth_request(db: AsyncSession, phone: str) -> AuthActionResult:
         if not await check_cooldown_expired(db, phone):

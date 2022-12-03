@@ -4,7 +4,10 @@ from datetime import datetime, timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from quick_wallet.database.models import VerificationCode
-from quick_wallet.utils.datetime import calculate_future_datetime, check_datetime_expired
+from quick_wallet.utils.datetime import (
+    calculate_future_datetime,
+    check_datetime_expired,
+)
 
 
 class VerificationCodeManager:

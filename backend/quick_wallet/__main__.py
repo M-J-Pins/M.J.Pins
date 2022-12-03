@@ -1,12 +1,12 @@
 import asyncio
 from urllib.parse import urlparse
 
+import uvicorn
 from fastapi import FastAPI
 from fastapi_pagination import add_pagination
-import uvicorn
 
-from quick_wallet.endpoints import list_of_routes
 from quick_wallet.config import ConfigSettings, get_settings
+from quick_wallet.endpoints import list_of_routes
 
 
 def bind_routes(application: FastAPI, setting: ConfigSettings) -> None:
