@@ -22,3 +22,6 @@ class CardResponse(BaseModel):
 
 class CardListResponse(BaseModel):
     cards: List[CardResponse]
+
+    class Config:
+        orm_mode = True

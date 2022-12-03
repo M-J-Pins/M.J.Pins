@@ -15,7 +15,7 @@ api_router = APIRouter(prefix="/cards")
 
 @api_router.get(
     "/my",
-    response_model=CardResponse,
+    response_model=CardListResponse,
     status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_422_UNPROCESSABLE_ENTITY: {
