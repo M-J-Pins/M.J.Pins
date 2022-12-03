@@ -21,7 +21,7 @@ class AddUnknownCardRequest(AddCardBaseRequest):
         orm_mode = True
 
 
-class AddStandartCardRequest(AddCardBaseRequest):
+class AddStandardCardRequest(AddCardBaseRequest):
     shop_id: UUID
 
     class Config:

@@ -5,11 +5,11 @@ from sqlalchemy.dialects.postgresql import TEXT, UUID
 
 from quick_wallet.database.models.base import BaseTable
 
-from .shop   import ShopCategoryEnum
+from .shop import ShopCategoryEnum
 
 
 class CardTypeEnum(enum.Enum):
-    STANDART = "STANDART"
+    STANDARD = "STANDARD"
     UNKNOWN = "UNKNOWN"
 
 
@@ -41,12 +41,12 @@ class Card(BaseTable):
     shop_id = Column(
         UUID, nullable=True, unique=False, doc="Shop ID from shop table"
     )
-    image_url = Column(TEXT, nullable=True, unique=False, doc="URL to load card image (if type=STANDART")
+    image_url = Column(TEXT, nullable=True, unique=False, doc="URL to load card image (if type=STANDARD")
     shop_name = Column(
         TEXT,
         nullable=False,
         unique=False,
-        doc="Name of the shop which was written by user or from shop table (if type=STANDART)",
+        doc="Name of the shop which was written by user or from shop table (if type=STANDARD)",
     )
     color = Column(
         Enum(CardColorEnum), nullable=True, unique=False, doc="Card color in mobile interface (if type=UNKNOWN)"

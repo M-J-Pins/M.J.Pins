@@ -1,8 +1,8 @@
-from .add_card import AddUnknownCardRequest, AddStandartCardRequest, AddCardResponse
+from .add_card import AddUnknownCardRequest, AddStandardCardRequest, AddCardResponse
 
 
 __all__ = [
     "AddUnknownCardRequest",
-    "AddStandartCardRequest",
+    "AddStandardCardRequest",
     "AddCardResponse",
 ]

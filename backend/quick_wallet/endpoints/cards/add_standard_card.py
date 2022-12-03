@@ -4,7 +4,7 @@ from starlette import status
 
 from quick_wallet.database.connection import get_session
 from quick_wallet.database.models.storage import CardTypeEnum
-from quick_wallet.schemas.cards import AddStandartCardRequest, AddCardResponse
+from quick_wallet.schemas.cards import AddStandardCardRequest, AddCardResponse
 from quick_wallet.services.cards import CardManager
 from quick_wallet.services.access import FunctionCallResult
 
@@ -12,7 +12,7 @@ api_router = APIRouter(prefix="/card")
 
 
 @api_router.post(
-    "/add_standart",
+    "/add_standard",
     response_model=AddCardResponse,
     status_code=status.HTTP_200_OK,
     responses={
@@ -28,19 +28,19 @@ api_router = APIRouter(prefix="/card")
     },
 )
 async def auth_request_admin(
-    request: AddStandartCardRequest = Body(
+    request: AddStandardCardRequest = Body(
         ...,
         example={
             "token": "your jwt token",
             "barcode_data": "10398475822",
             "note": "My new card",
-            "shop_id": "<UUID_ID from DB>",
+            "shop_id": "bd65600d-8669-4903-8a14-af88203add38",
         },
     ),
     db: AsyncSession = Depends(get_session),
 ):
     """
-    Ручка принимает информацию о новой standart карте (карты зарегистрированного в приложении магазина)
+    Ручка принимает информацию о новой standard карте (карты зарегистрированного в приложении магазина)
     Добавляет карту в базу и отдает объект карты
     """
     result, new_card = await CardManager.add_card(
@@ -48,7 +48,7 @@ async def auth_request_admin(
         request.token,
         request.barcode_data,
         request.note,
-        CardTypeEnum.STANDART,
+        CardTypeEnum.STANDARD,
         shop_id=request.shop_id,
     )
     if result == FunctionCallResult.SUCCESS:
