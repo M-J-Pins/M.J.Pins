@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+
 from quick_wallet.config import get_settings
 
 

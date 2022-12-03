@@ -1,13 +1,7 @@
-from .auth import (
-    AuthRequestResponse,
-    AuthResponse,
-    PhoneAuthRequest,
-    PhoneAuthRequestRequest,
-)
+from .auth import AuthResponse, PhoneAuthRequest, PhoneAuthRequestRequest
 
 __all__ = [
     "AuthResponse",
-    "AuthRequestResponse",
     "PhoneAuthRequest",
     "PhoneAuthRequestRequest",
 ]

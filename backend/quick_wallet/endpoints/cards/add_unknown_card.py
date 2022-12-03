@@ -5,10 +5,10 @@ from starlette import status
 from quick_wallet.database.connection import get_session
 from quick_wallet.database.models.storage import CardTypeEnum
 from quick_wallet.schemas.cards import AddUnknownCardRequest, CardResponse
-from quick_wallet.services.cards import CardManager
 from quick_wallet.services.access import FunctionCallResult
+from quick_wallet.services.cards import CardManager
 
-api_router = APIRouter(prefix="/card")
+api_router = APIRouter(prefix="/cards")
 
 
 @api_router.post(
@@ -27,7 +27,7 @@ api_router = APIRouter(prefix="/card")
         },
     },
 )
-async def auth_request_admin(
+async def add_unknown_card(
     request: AddUnknownCardRequest = Body(
         ...,
         example={

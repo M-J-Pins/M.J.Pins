@@ -23,12 +23,7 @@ class FunctionCallResult(Enum):
 
 
 def authorized(func) -> (FunctionCallResult, Any):
-    async def wrapper(
-        db: AsyncSession,
-        jwtoken: str,
-        *args,
-        **kwargs
-    ):
+    async def wrapper(db: AsyncSession, jwtoken: str, *args, **kwargs):
         user_id = JWTManager().id_from_jwt(jwtoken)
         if user_id is None:
             return FunctionCallResult.UNAUTHORIZED, None

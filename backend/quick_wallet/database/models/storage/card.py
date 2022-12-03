@@ -38,10 +38,13 @@ class Card(BaseTable):
         nullable=True,
         doc="Special data which is created by the owner",
     )
-    shop_id = Column(
-        UUID, nullable=True, unique=False, doc="Shop ID from shop table"
+    shop_id = Column(UUID, nullable=True, unique=False, doc="Shop ID from shop table")
+    image_url = Column(
+        TEXT,
+        nullable=True,
+        unique=False,
+        doc="URL to load card image (if type=STANDARD",
     )
-    image_url = Column(TEXT, nullable=True, unique=False, doc="URL to load card image (if type=STANDARD")
     shop_name = Column(
         TEXT,
         nullable=False,
@@ -49,7 +52,10 @@ class Card(BaseTable):
         doc="Name of the shop which was written by user or from shop table (if type=STANDARD)",
     )
     color = Column(
-        Enum(CardColorEnum), nullable=True, unique=False, doc="Card color in mobile interface (if type=UNKNOWN)"
+        Enum(CardColorEnum),
+        nullable=True,
+        unique=False,
+        doc="Card color in mobile interface (if type=UNKNOWN)",
     )
     map_search_string = Column(
         TEXT,

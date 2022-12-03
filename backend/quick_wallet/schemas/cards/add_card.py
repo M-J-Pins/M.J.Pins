@@ -1,7 +1,7 @@
 from uuid import UUID
 
-from quick_wallet.schemas.base import AuthorizedRequest
 from quick_wallet.database.models.storage import ShopCategoryEnum
+from quick_wallet.schemas.base import AuthorizedRequest
 
 
 class AddCardBaseRequest(AuthorizedRequest):
@@ -22,6 +22,3 @@ class AddStandardCardRequest(AddCardBaseRequest):
 
     class Config:
         orm_mode = True
-
-
-

@@ -3,7 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from quick_wallet.database.connection import get_session
-from quick_wallet.schemas.auth import AuthRequestResponse, PhoneAuthRequestRequest
+from quick_wallet.schemas.auth import PhoneAuthRequestRequest
+from quick_wallet.schemas.base import BaseResponse
 from quick_wallet.services.auth import AuthActionResult, AuthManager
 
 api_router = APIRouter(prefix="/auth")
@@ -11,7 +12,7 @@ api_router = APIRouter(prefix="/auth")
 
 @api_router.post(
     "/auth_request",
-    response_model=AuthRequestResponse,
+    response_model=BaseResponse,
     status_code=status.HTTP_202_ACCEPTED,
     responses={
         status.HTTP_422_UNPROCESSABLE_ENTITY: {

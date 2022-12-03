@@ -7,7 +7,7 @@ from starlette import status
 from quick_wallet.database.connection import get_session
 from quick_wallet.database.models import Card
 from quick_wallet.schemas.base import AuthorizedRequest
-from quick_wallet.schemas.cards import CardResponse, CardListResponse
+from quick_wallet.schemas.cards import CardListResponse, CardResponse
 from quick_wallet.services.misc import JWTManager
 
 api_router = APIRouter(prefix="/cards")
@@ -29,7 +29,7 @@ api_router = APIRouter(prefix="/cards")
         },
     },
 )
-async def auth_request_admin(
+async def get_my_cards(
     request: AuthorizedRequest = Depends(),
     db: AsyncSession = Depends(get_session),
 ):
@@ -42,7 +42,12 @@ async def auth_request_admin(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
     db_cards: List[Card] = await Card.get_all(db, owner_id=user_id)
-    response_cards: List[CardResponse] = [CardResponse.from_orm(card) for card in db_cards]
+    if db_cards is None:
+        return CardListResponse()
+
+    response_cards: List[CardResponse] = [
+        CardResponse.from_orm(card) for card in db_cards
+    ]
     response: CardListResponse = CardListResponse(cards=response_cards)
 
     return response

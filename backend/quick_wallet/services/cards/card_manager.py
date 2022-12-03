@@ -4,12 +4,17 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from quick_wallet.database.models.storage import (
+    Card,
+    CardColorEnum,
+    CardTypeEnum,
+    Shop,
+    ShopCategoryEnum,
+)
 from quick_wallet.services.access import authorized
-from quick_wallet.database.models.storage import Card, CardColorEnum, CardTypeEnum, Shop, ShopCategoryEnum
 
 
 class CardManager:
-
     @staticmethod
     @authorized
     async def add_card(

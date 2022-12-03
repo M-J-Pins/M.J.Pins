@@ -36,7 +36,7 @@ async def auth_request_admin(
         ...,
         example={
             "phone": "79507990996",
-        }
+        },
     ),
     db: AsyncSession = Depends(get_session),
 ):

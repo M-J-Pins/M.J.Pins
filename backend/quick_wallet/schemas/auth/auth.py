@@ -32,9 +32,5 @@ class PhoneAuthRequest(BaseModel):
         orm_mode = True
 
 
-class AuthRequestResponse(BaseModel):
-    description: str = Field(...)
-
-
 class AuthResponse(BaseModel):
     token: str = Field(...)

@@ -42,9 +42,9 @@ class JWTManager:
 
     def id_from_jwt(self, client_jwt: str) -> UUID:
         try:
-            id_from_jwt = jwt.decode(client_jwt.encode(), self.secret, algorithms=[self.algo]).get(
-                "id", None
-            )
+            id_from_jwt = jwt.decode(
+                client_jwt.encode(), self.secret, algorithms=[self.algo]
+            ).get("id", None)
         except jwt.exceptions.DecodeError as e:
             print(e)
             id_from_jwt = None

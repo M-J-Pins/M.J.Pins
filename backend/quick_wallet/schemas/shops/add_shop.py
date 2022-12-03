@@ -1,7 +1,7 @@
-from pydantic import BaseModel, AnyHttpUrl
+from pydantic import AnyHttpUrl, BaseModel
 
-from quick_wallet.schemas.base import AdminRequest
 from quick_wallet.database.models.storage import ShopCategoryEnum
+from quick_wallet.schemas.base import AdminRequest
 
 
 class AddShopRequest(AdminRequest):

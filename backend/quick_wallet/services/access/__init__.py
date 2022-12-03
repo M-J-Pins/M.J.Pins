@@ -1,5 +1,4 @@
-from .access_decorator import authorized, FunctionCallResult
-
+from .access_decorator import FunctionCallResult, authorized
 
 __all__ = [
     "authorized",

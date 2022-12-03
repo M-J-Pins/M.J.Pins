@@ -1,9 +1,13 @@
 from uuid import UUID
 
-from pydantic import BaseModel, AnyHttpUrl
-from pydantic.fields import Optional, List
+from pydantic import AnyHttpUrl, BaseModel
+from pydantic.fields import List, Optional
 
-from quick_wallet.database.models.storage import ShopCategoryEnum, CardTypeEnum, CardColorEnum
+from quick_wallet.database.models.storage import (
+    CardColorEnum,
+    CardTypeEnum,
+    ShopCategoryEnum,
+)
 
 
 class CardResponse(BaseModel):
@@ -21,7 +25,7 @@ class CardResponse(BaseModel):
 
 
 class CardListResponse(BaseModel):
-    cards: List[CardResponse]
+    cards: List[CardResponse] = []
 
     class Config:
         orm_mode = True

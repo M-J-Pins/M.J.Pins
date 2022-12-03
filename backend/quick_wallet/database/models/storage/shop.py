@@ -25,6 +25,11 @@ class Shop(BaseTable):
     )
     icon_url = Column(TEXT, nullable=False, unique=False, doc="Url to load icon image")
     category = Column(
-        Enum(ShopCategoryEnum), nullable=True, unique=False, doc="Shop type to filter cards"
+        Enum(ShopCategoryEnum),
+        nullable=True,
+        unique=False,
+        doc="Shop type to filter cards",
     )
-    card_image_url = Column(TEXT, nullable=True, unique=False, doc="URL to load card image")
+    card_image_url = Column(
+        TEXT, nullable=True, unique=False, doc="URL to load card image"
+    )
