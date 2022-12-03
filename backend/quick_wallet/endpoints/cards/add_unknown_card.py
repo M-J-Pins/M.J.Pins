@@ -48,7 +48,6 @@ async def add_unknown_card(
         db,
         request.token,
         request.barcode_data,
-        request.note,
         CardTypeEnum.UNKNOWN,
         shop_name=request.shop_name,
         category=request.category,

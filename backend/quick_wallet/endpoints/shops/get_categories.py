@@ -4,7 +4,6 @@ from starlette import status
 from quick_wallet.database.models.storage import ShopCategoryEnum
 from quick_wallet.schemas.shops import CategoryListResponse
 
-
 api_router = APIRouter(prefix="/shops")
 
 
@@ -22,5 +21,7 @@ async def get_categories():
     """
     Ручка возвращает список категорий магазинов
     """
-    response: CategoryListResponse = CategoryListResponse(categories=[cat.value for cat in ShopCategoryEnum])
+    response: CategoryListResponse = CategoryListResponse(
+        categories=[cat.value for cat in ShopCategoryEnum]
+    )
     return response

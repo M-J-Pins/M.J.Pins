@@ -1,5 +1,5 @@
 from .add_shop import AddShopRequest
-from .base import ShopListResponse, ShopResponse, CategoryListResponse
+from .base import CategoryListResponse, ShopListResponse, ShopResponse
 
 __all__ = [
     "AddShopRequest",

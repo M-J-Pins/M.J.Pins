@@ -9,7 +9,6 @@ from quick_wallet.database.models import Card
 from quick_wallet.schemas.base import AuthorizedRequest, BaseResponse
 from quick_wallet.services.misc import JWTManager
 
-
 api_router = APIRouter(prefix="/cards")
 
 

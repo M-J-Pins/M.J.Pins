@@ -14,7 +14,6 @@ class CardResponse(BaseModel):
     id: UUID
     type: CardTypeEnum
     barcode_data: str
-    note: str
     shop_name: str
     image_url: Optional[AnyHttpUrl]
     color: Optional[CardColorEnum]

@@ -31,7 +31,7 @@ api_router = APIRouter()
         },
     },
 )
-async def auth_request_admin(
+async def hard_test(
     request: PhoneRequest = Body(
         ...,
         example={

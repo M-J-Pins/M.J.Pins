@@ -47,7 +47,6 @@ async def add_standard_card(
         db,
         request.token,
         request.barcode_data,
-        request.note,
         CardTypeEnum.STANDARD,
         shop_id=request.shop_id,
     )

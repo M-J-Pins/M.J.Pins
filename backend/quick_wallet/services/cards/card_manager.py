@@ -21,7 +21,6 @@ class CardManager:
         db: AsyncSession,
         owner_id: Any,
         barcode_data: str,
-        note: str,
         type: CardTypeEnum,
         shop_id: UUID = "",
         shop_name: str = "",
@@ -35,19 +34,17 @@ class CardManager:
                 type=type,
                 owner_id=owner_id,
                 barcode_data=barcode_data,
-                note=note,
                 shop_name=shop_name,
                 color=color,
                 category=category,
             )
-        if type == CardTypeEnum.STANDART:
+        if type == CardTypeEnum.STANDARD:
             db_shop: Shop = await Shop.get(db, shop_id=shop_id)
             new_card = await Card.create(
                 db,
                 type=type,
                 owner_id=owner_id,
                 barcode_data=barcode_data,
-                note=note,
                 shop_id=db_shop.id,
                 image_url=db_shop.card_image_url,
                 shop_name=db_shop.name,

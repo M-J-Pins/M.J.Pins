@@ -33,11 +33,6 @@ class Card(BaseTable):
         nullable=False,
         doc="Card barcode data",
     )
-    note = Column(
-        TEXT,
-        nullable=True,
-        doc="Special data which is created by the owner",
-    )
     shop_id = Column(UUID, nullable=True, unique=False, doc="Shop ID from shop table")
     image_url = Column(
         TEXT,

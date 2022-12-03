@@ -6,7 +6,6 @@ from quick_wallet.schemas.base import AuthorizedRequest
 
 class AddCardBaseRequest(AuthorizedRequest):
     barcode_data: str
-    note: str
 
 
 class AddUnknownCardRequest(AddCardBaseRequest):
