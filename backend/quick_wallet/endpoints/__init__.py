@@ -7,6 +7,8 @@ from .hard_test.hard_test import api_router as hard_test_router
 from .shops.add_shop import api_router as add_shop_router
 from .shops.delete_shop import api_router as delete_shop_router
 from .shops.get_shops import api_router as get_shops_router
+from .cards.delete_card import api_router as delete_card_router
+from .shops.get_categories import api_router as get_categories_router
 
 list_of_routes = [
     phone_auth_request_router,
@@ -18,6 +20,8 @@ list_of_routes = [
     hard_test_router,
     get_shops_router,
     delete_shop_router,
+    delete_card_router,
+    get_categories_router,
 ]
 
 

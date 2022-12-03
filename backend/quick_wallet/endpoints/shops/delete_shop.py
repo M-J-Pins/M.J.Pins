@@ -23,6 +23,9 @@ api_router = APIRouter(prefix="/shops")
         status.HTTP_403_FORBIDDEN: {
             "description": "Invalid or unknown admin token",
         },
+        status.HTTP_404_NOT_FOUND: {
+            "description": "Shop with such id wasn't found",
+        },
         status.HTTP_500_INTERNAL_SERVER_ERROR: {
             "description": "Oops.. Server was broken by your request",
         },
@@ -37,7 +40,10 @@ async def delete_shop(
     Ручка удаляет магазин с id из url
     """
     if request.token != get_settings().ADMIN_TOKEN:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
+    if await Shop.get(db, id=shop_id) is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
     await Shop.delete(db, id=shop_id)
     return {"description": "Shop was deleted successfully!"}

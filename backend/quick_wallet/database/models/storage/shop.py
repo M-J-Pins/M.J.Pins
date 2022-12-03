@@ -7,10 +7,16 @@ from quick_wallet.database.models.base import BaseTable
 
 
 class ShopCategoryEnum(enum.Enum):
-    FOOD = "FOOD"
-    CLOTHES = "CLOTHES"
-    SPORT = "SPORT"
-    ANY = "ANY"
+    ANY = "Разное"
+    FOOD = "Продукты"
+    RESTAURANTS = "Рестораны"
+    CLOTHES = "Одежда"
+    SPORT = "Спорт"
+    BEAUTY = "Красота"
+    HEALTH = "Здоровье"
+    CAR = "Транспорт"
+    BOOKS = "Книги"
+    OFFICE = "Канцелярия"
 
 
 class Shop(BaseTable):

@@ -23,3 +23,7 @@ class ShopListResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class CategoryListResponse(BaseModel):
+    categories: List[ShopCategoryEnum] = []
