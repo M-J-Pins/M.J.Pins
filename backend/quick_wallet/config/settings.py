@@ -23,6 +23,9 @@ class ConfigSettings(BaseSettings):
     SMSAERO_EMAIL: str = environ.get("SMSAERO_EMAIL", "email")
     SMSAERO_KEY: str = environ.get("SMSAERO_KEY", "key")
 
+    ADMIN_TOKEN: str = environ.get("ADMIN_TOKEN", "ADMIN_TOKEN")
+    IMGBB_KEY: str = environ.get("IMGBB_KEY", "IMGBB_KEY")
+
     POSTGRES_DB: str = environ.get("POSTGRES_DB", "quick-wallet")
     POSTGRES_HOST: str = environ.get("POSTGRES_HOST", "localhost")
     POSTGRES_USER: str = environ.get("POSTGRES_USER", "user")

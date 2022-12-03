@@ -20,6 +20,7 @@ isort = "^5.10.1"
 black = "^22.10.0"
 orjson = "^3.8.3"
 decorator = "^5.1.1"
+python-multipart = "^0.0.5"
 
 [tool.poetry.dev-dependencies]
 

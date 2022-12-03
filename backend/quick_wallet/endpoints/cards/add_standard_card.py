@@ -4,7 +4,7 @@ from starlette import status
 
 from quick_wallet.database.connection import get_session
 from quick_wallet.database.models.storage import CardTypeEnum
-from quick_wallet.schemas.cards import AddStandardCardRequest, AddCardResponse
+from quick_wallet.schemas.cards import AddStandardCardRequest, CardResponse
 from quick_wallet.services.cards import CardManager
 from quick_wallet.services.access import FunctionCallResult
 
@@ -13,7 +13,7 @@ api_router = APIRouter(prefix="/card")
 
 @api_router.post(
     "/add_standard",
-    response_model=AddCardResponse,
+    response_model=CardResponse,
     status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_422_UNPROCESSABLE_ENTITY: {
@@ -52,7 +52,7 @@ async def auth_request_admin(
         shop_id=request.shop_id,
     )
     if result == FunctionCallResult.SUCCESS:
-        return AddCardResponse.from_orm(new_card)
+        return CardResponse.from_orm(new_card)
     raise HTTPException(
         status_code=result.value,
     )

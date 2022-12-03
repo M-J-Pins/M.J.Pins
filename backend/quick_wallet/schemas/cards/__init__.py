@@ -1,8 +1,10 @@
-from .add_card import AddUnknownCardRequest, AddStandardCardRequest, AddCardResponse
+from .add_card import AddUnknownCardRequest, AddStandardCardRequest
+from .base import CardResponse, CardListResponse
 
 
 __all__ = [
     "AddUnknownCardRequest",
     "AddStandardCardRequest",
-    "AddCardResponse",
+    "CardResponse",
+    "CardListResponse",
 ]
