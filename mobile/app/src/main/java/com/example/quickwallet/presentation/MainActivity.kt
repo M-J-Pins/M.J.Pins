@@ -50,7 +50,10 @@ class MainActivity : ComponentActivity() {
                     val viewModel = hiltViewModel<AuthViewModel>()
                     AuthView(
                         phone = viewModel.phoneNumber.value,
-                        codeCells = viewModel.codeCells.value,
+                        opt0 = viewModel.opt0.value,
+                        opt1 = viewModel.opt1.value,
+                        opt2 = viewModel.opt2.value,
+                        opt3 = viewModel.opt3.value,
                         onPhoneChanged = viewModel::onPhoneNumberChanged,
                         onCodeCellChanged = viewModel::onCodeCellChange,
                         isPhoneSendScreen = viewModel.isPhoneSendScreen.value,

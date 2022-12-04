@@ -14,7 +14,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
@@ -30,11 +34,17 @@ import com.example.compose.AppTheme
 import com.example.quickwallet.R
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalComposeUiApi::class
+)
 @Composable
 fun AuthView(
     phone: String,
-    codeCells: List<String>,
+    opt0: String,
+    opt1: String,
+    opt2: String,
+    opt3: String,
     onPhoneChanged: (String) -> Unit,
     onCodeCellChanged: (String, Int) -> Unit,
     isPhoneSendScreen: Boolean,
@@ -82,7 +92,7 @@ fun AuthView(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            if (!isPhoneSendScreen) {
+            if (isPhoneSendScreen) {
                 Text(
                     modifier = Modifier.offset(y = 198.dp),
                     text = "Введите номер телефона",
@@ -165,29 +175,69 @@ fun AuthView(
                         .offset(y = 102.dp)
                         .fillMaxWidth(),
                 ) {
+                    val (item1, item2, item3, item4) = FocusRequester.createRefs()
                     CommonOtpTextField(
-                        modifier = Modifier.offset(x = (-2).dp),
-                        otp = codeCells[0],
+                        modifier = Modifier
+                            .offset(x = (-2).dp)
+                            .focusRequester(item1)
+                            .focusProperties {
+                                next = item2
+                                previous = item1
+                            },
+                        otp = opt0,
                         index = 0,
                         onOptChange = onCodeCellChanged
                     )
                     CommonOtpTextField(
-                        modifier = Modifier.offset(x = 34.dp),
-                        otp = codeCells[1],
+                        modifier = Modifier
+                            .offset(x = 34.dp)
+                            .focusRequester(item2)
+                            .focusProperties {
+                                next = item3
+                                previous = item1
+                            },
+                        otp = opt1,
                         index = 1,
                         onOptChange = onCodeCellChanged
                     )
                     CommonOtpTextField(
-                        modifier = Modifier.offset(x = 70.dp),
-                        otp = codeCells[2],
+                        modifier = Modifier
+                            .offset(x = 70.dp)
+                            .focusRequester(item3)
+                            .focusProperties {
+                                next = item4
+                                previous = item2
+                            },
+                        otp = opt2,
                         index = 2,
                         onOptChange = onCodeCellChanged
                     )
                     CommonOtpTextField(
-                        modifier = Modifier.offset(x = 106.dp),
-                        otp = codeCells[3],
+                        modifier = Modifier
+                            .offset(x = 106.dp)
+                            .focusRequester(item4)
+                            .focusProperties {
+                                next = item4
+                                previous = item3
+                            },
+                        otp = opt3,
                         index = 3,
                         onOptChange = onCodeCellChanged
+                    )
+                }
+                OutlinedButton(
+                    modifier = Modifier
+                            .offset(y = 336.dp)
+//                        .requiredWidth(236.dp)
+                            .padding(16.dp,12.dp),
+//                        .fillMaxWidth(),
+
+                    onClick = { },
+                ) {
+                    Text(
+                        "Отправить повторно через 0:30",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
 
@@ -210,14 +260,13 @@ fun CommonOtpTextField(
         value = otp,
         singleLine = true,
         onValueChange = {
-            if (it.length <= max) {
-                onOptChange(it, index)
-            }
+            onOptChange(it, index)
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
         shape = RoundedCornerShape(4.dp),
         modifier = modifier
-            .requiredSize(56.dp),
+            .requiredWidth(56.dp)
+            .wrapContentSize(align = Alignment.Center),
 
         maxLines = 1,
         textStyle = LocalTextStyle.current.copy(

@@ -27,7 +27,10 @@ constructor(
 ) : ViewModel() {
     private val maxCodeCellLength = 1
     val phoneNumber: MutableState<String> = mutableStateOf("")
-    val codeCells: MutableState<MutableList<String>> = mutableStateOf(mutableListOf("8", "8", "1", "1"))
+    val opt0:MutableState<String> = mutableStateOf("")
+    val opt1:MutableState<String> = mutableStateOf("")
+    val opt2:MutableState<String> = mutableStateOf("")
+    val opt3:MutableState<String> = mutableStateOf("")
     val isPhoneSendScreen: MutableState<Boolean> = mutableStateOf(true)
     val isWrongCode: MutableState<Boolean> = mutableStateOf(false)
     val phoneNumberError: MutableState<Boolean> = mutableStateOf(false)
@@ -39,9 +42,14 @@ constructor(
 
     fun onCodeCellChange(code: String, index: Int) {
         if (code.length <= maxCodeCellLength
-            && index < codeCells.value.size
+            && index < 4
         ) {
-            codeCells.value[index] = code
+            when(index) {
+                0->opt0.value=code
+                1->opt1.value=code
+                2->opt2.value=code
+                3->opt3.value=code
+            }
         }
     }
 
@@ -71,10 +79,7 @@ constructor(
                     repository.phoneAuth(
                         AuthData(
                             phoneNumber = phoneNumber.value,
-                            code = codeCells.value[0]
-                                    + codeCells.value[1]
-                                    + codeCells.value[2]
-                                    + codeCells.value[3]
+                            code = opt0.value+opt1.value+opt2.value+opt3.value
                         )
                     )
                 }
