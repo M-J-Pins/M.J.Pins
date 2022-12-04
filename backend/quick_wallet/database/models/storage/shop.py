@@ -1,7 +1,7 @@
 import enum
 
 from sqlalchemy import Column, Enum
-from sqlalchemy.dialects.postgresql import TEXT, UUID
+from sqlalchemy.dialects.postgresql import TEXT
 
 from quick_wallet.database.models.base import BaseTable
 
