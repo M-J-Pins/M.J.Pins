@@ -25,7 +25,8 @@ object AppModule {
     @Singleton
     @Provides
     @Named("token")
-    fun provideAccessToken(@ApplicationContext app: Context): String? =
-        app.getSharedPreferences(Constants.sharedPreferencesStorageName, MODE_PRIVATE)
-            ?.getString(Constants.sharedPreferencesTokenName, null)
+    fun provideAccessToken(@ApplicationContext app: Context): String {
+        return app.getSharedPreferences(Constants.sharedPreferencesStorageName, MODE_PRIVATE)
+            ?.getString(Constants.sharedPreferencesTokenName, null) ?: ""
+    }
 }

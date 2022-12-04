@@ -30,10 +30,15 @@ object Versions {
     const val cameraCore = "1.0.2"
 
     //accompanist
-    const val accompanist = "0.23.1"
+    const val accompanist = "0.28.0"
 
     //retrofit2
     const val retrofit = "2.9.0"
+
+    //paging
+    const val paging = "3.1.1"
+
+    const val materialTheme3 = "1.0.1"
 
 
 }

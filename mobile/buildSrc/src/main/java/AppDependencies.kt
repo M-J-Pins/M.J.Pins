@@ -12,11 +12,13 @@ object AppDependencies {
     private const val composeMaterial = "androidx.compose.material:material:${Versions.compose}"
     private const val composeMaterialIconsExtended =
         "androidx.compose.material:material-icons-extended:${Versions.compose}"
-    private const val composePreview = "androidx.compose.ui:ui-tooling-preview:${Versions.compose}"
+//    private const val composePreview = "androidx.compose.ui:ui-tooling-preview:${Versions.compose}"
     private const val composeActivity =
         "androidx.activity:activity-compose:${Versions.composeActivity}"
     private const val composeViewModel =
         "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.lifecycle}"
+    private const val materialTheme3 = "androidx.compose.material3:material3:${Versions.materialTheme3}"
+    private const val mt3class = "androidx.compose.material3:material3-window-size-class:${Versions.materialTheme3}"
 
     //navigation
     private const val navigation = "androidx.navigation:navigation-compose:${Versions.nav}"
@@ -47,6 +49,9 @@ object AppDependencies {
         "com.google.accompanist:accompanist-permissions:${Versions.accompanist}"
     private const val animatedNavigation = "com.google.accompanist:accompanist-navigation-animation:${Versions.accompanist}"
 
+    //pageing
+    private const val paging = "androidx.paging:paging-runtime:${Versions.paging}"
+    private const val accompanistPager = "com.google.accompanist:accompanist-pager:${Versions.accompanist}"
 
     //retrofit
     private const val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
@@ -60,7 +65,6 @@ object AppDependencies {
         composeUIUtil,
         composeMaterial,
         composeMaterialIconsExtended,
-        composePreview,
         composeActivity,
         navigation,
         hilt,
@@ -70,11 +74,15 @@ object AppDependencies {
         cameraCore,
         cameraView,
         cameraLifeCycle,
-        permissions,
         retrofit,
         retrofitGson,
         hiltNavigation,
-        animatedNavigation
+        animatedNavigation,
+        permissions,
+        paging,
+        accompanistPager,
+        materialTheme3,
+        mt3class,
     )
 
     val kaptLibs = listOf(hiltCompiler)

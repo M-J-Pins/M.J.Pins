@@ -2,8 +2,7 @@ package com.example.quickwallet.di
 
 import com.example.quickwallet.network.ServiceBuilder
 import com.example.quickwallet.network.api.AuthApi
-import com.example.quickwallet.network.auth.AuthService
-import com.example.quickwallet.network.auth.impl.AuthServiceImpl
+import com.example.quickwallet.network.api.CardApi
 import com.example.quickwallet.network.model.AuthDataMapper
 import com.example.quickwallet.network.model.PhoneNumberMapper
 import dagger.Module
@@ -26,4 +25,8 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideAuthApi(): AuthApi = ServiceBuilder.buildService(AuthApi::class.java)
+
+    @Singleton
+    @Provides
+    fun provideCardApi(): CardApi = ServiceBuilder.buildService(CardApi::class.java)
 }

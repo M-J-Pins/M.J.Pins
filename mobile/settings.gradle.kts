@@ -21,6 +21,9 @@ pluginManagement {
             if (requested.id.id.startsWith("dagger.hilt.android")) {
                 useModule("com.google.dagger:hilt-android-gradle-plugin:2.43.2")
             }
+            if (requested.id.id.startsWith("com.google.devtools.ksp")) {
+                useModule("com.google.devtools.ksp:symbol-processing-api:1.7.10-1.0.6")
+            }
         }
     }
 }

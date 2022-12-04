@@ -4,7 +4,7 @@ package com.example.quickwallet.repository.impl
 import com.example.quickwallet.domain.model.AuthData
 import com.example.quickwallet.domain.model.PhoneNumber
 import com.example.quickwallet.domain.utils.DomainMapper
-import com.example.quickwallet.network.auth.AuthService
+import com.example.quickwallet.network.services.auth.AuthService
 import com.example.quickwallet.network.model.AuthDataDto
 import com.example.quickwallet.network.model.PhoneNumberDto
 import com.example.quickwallet.repository.AuthRepository

@@ -1,9 +1,9 @@
-package com.example.quickwallet.network.auth.impl
+package com.example.quickwallet.network.services.auth.impl
 
 import android.util.Log
 import com.example.quickwallet.network.ServiceBuilder
 import com.example.quickwallet.network.api.AuthApi
-import com.example.quickwallet.network.auth.AuthService
+import com.example.quickwallet.network.services.auth.AuthService
 import com.example.quickwallet.network.model.AuthDataDto
 import com.example.quickwallet.network.model.PhoneNumberDto
 import com.example.quickwallet.network.response.AuthPhoneResponse

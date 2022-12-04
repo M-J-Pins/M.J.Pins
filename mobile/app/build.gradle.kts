@@ -3,6 +3,7 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
+
 }
 apply {
     plugin("kotlin-android")
@@ -53,6 +54,10 @@ android {
 }
 
 dependencies {
+    implementation("androidx.appcompat:appcompat:1.4.1")
+    implementation(files("C:\\Users\\Maxim\\Documents\\accompanist-systemuicontroller-0.28.0.aar"))
+    runtimeOnly("dev.chrisbanes.snapper:snapper:0.3.0")
+    runtimeOnly("com.google.android.material:material:1.6.1")
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(AppDependencies.appLibs)
     kapt(AppDependencies.kaptLibs)

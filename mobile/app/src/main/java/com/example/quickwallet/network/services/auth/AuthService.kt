@@ -1,4 +1,4 @@
-package com.example.quickwallet.network.auth
+package com.example.quickwallet.network.services.auth
 
 import com.example.quickwallet.network.model.AuthDataDto
 import com.example.quickwallet.network.model.PhoneNumberDto
