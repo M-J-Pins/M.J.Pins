@@ -25,6 +25,8 @@ class ConfigSettings(BaseSettings):
 
     ADMIN_TOKEN: str = environ.get("ADMIN_TOKEN", "ADMIN_TOKEN")
     IMGBB_KEY: str = environ.get("IMGBB_KEY", "IMGBB_KEY")
+    YANDEX_API_KEY: str = environ.get("YANDEX_API_KEY", "YANDEX_API_KEY")
+    SEARCH_RADIUS: int = int(environ.get("SEARCH_RADIUS", 150))
 
     POSTGRES_DB: str = environ.get("POSTGRES_DB", "quick-wallet")
     POSTGRES_HOST: str = environ.get("POSTGRES_HOST", "localhost")
