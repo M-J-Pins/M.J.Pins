@@ -26,15 +26,15 @@ constructor(
     private val app: BaseApplication
 ) : ViewModel() {
     private val maxCodeCellLength = 1
+    val TOKEN: MutableState<String> = mutableStateOf("")
+    val isTokenReceived: MutableState<Boolean> = mutableStateOf(false)
     val phoneNumber: MutableState<String> = mutableStateOf("")
     val opt0:MutableState<String> = mutableStateOf("")
     val opt1:MutableState<String> = mutableStateOf("")
     val opt2:MutableState<String> = mutableStateOf("")
     val opt3:MutableState<String> = mutableStateOf("")
-    val isPhoneSendScreen: MutableState<Boolean> = mutableStateOf(true)
     val isWrongCode: MutableState<Boolean> = mutableStateOf(false)
     val phoneNumberError: MutableState<Boolean> = mutableStateOf(false)
-    val tokenReceived: MutableState<Boolean> = mutableStateOf(false)
 
     fun onPhoneNumberChanged(number: String) {
         this.phoneNumber.value = number
@@ -58,51 +58,33 @@ constructor(
             try {
                 if (repository.phoneAuthRequest(PhoneNumber(phoneNumber.value)) == null) {
                     phoneNumberError.value = true
-                } else {
-                    isPhoneSendScreen.value = false
                 }
             } catch (e: Exception) {
                 Log.d(Constants.authViewModelLogTag, e.stackTraceToString())
             }
         }
-    }
-
-    fun onPhoneSendScreen(state: Boolean) {
-        isPhoneSendScreen.value = state
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun sendPhoneAuth() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val token = async {
-                    repository.phoneAuth(
-                        AuthData(
-                            phoneNumber = phoneNumber.value,
-                            code = opt0.value+opt1.value+opt2.value+opt3.value
-                        )
+                val token = repository.phoneAuth(
+                    AuthData(
+                        phoneNumber = phoneNumber.value,
+                        code = opt0.value+opt1.value+opt2.value+opt3.value
                     )
-                }
-                if (token.await() == null) {
+                )
+                if (token == null) {
                     isWrongCode.value = true
                 } else {
-                    Log.d(Constants.authViewModelLogTag, token.getCompleted()!!)
-                    saveToken(token.getCompleted()!!)
-                    tokenReceived.value = true
+                    TOKEN.value= token
+                    isTokenReceived.value = true
+                    Log.d(Constants.authViewModelLogTag, TOKEN.value)
                 }
             } catch (e: Exception) {
                 Log.d(Constants.authViewModelLogTag, e.stackTraceToString())
             }
         }
     }
-
-    private fun saveToken(token: String) {
-        with(
-            app.getSharedPreferences(Constants.sharedPreferencesStorageName, MODE_PRIVATE).edit()
-        ) {
-            putString(token, null)
-            apply()
-        }
-    }
-
 }

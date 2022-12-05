@@ -11,12 +11,15 @@ class CardRepositoryImpl(
     private val cardService: CardService
 ) : CardRepository {
     override suspend fun addUnknownCard(
+        token: String,
         barcodeData: String,
         note: String,
         shopName: String,
         category: String
-    ): Card? = cardService.addUnknownCard(UnknownCardRequest(barcodeData, note, shopName, category))
+    ): Card? = cardService.addUnknownCard(token, UnknownCardRequest(barcodeData, note, shopName, category))
 
-    override suspend fun addStandardCard(shopId: String, barcodeData: String, note: String): Card? =
-        cardService.addStandardCard(StandardCardRequest(shopId, barcodeData, note))
+    override suspend fun addStandardCard(token: String, shopId: String, barcodeData: String, note: String): Card? =
+        cardService.addStandardCard(token, StandardCardRequest(shopId, barcodeData, note))
+
+    override suspend fun getAllCards(token: String): List<Card>? = cardService.getAllCards(token)
 }

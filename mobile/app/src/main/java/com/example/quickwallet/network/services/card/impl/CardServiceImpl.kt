@@ -14,10 +14,9 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class CardServiceImpl(
-    private val retrofit: CardApi,
-    private val token: String
+    private val retrofit: CardApi
 ): CardService {
-    override suspend fun addStandardCard(standardCardDto: StandardCardRequest): Card? {
+    override suspend fun addStandardCard(token: String,standardCardDto: StandardCardRequest): Card? {
         var card: Card? = null
         retrofit.addStandardCard(token, standardCardDto).enqueue(
             object : Callback<CardResponse> {
@@ -38,7 +37,7 @@ class CardServiceImpl(
         return card
     }
 
-    override suspend fun addUnknownCard(unknownCardRequest: UnknownCardRequest): Card? {
+    override suspend fun addUnknownCard(token: String,unknownCardRequest: UnknownCardRequest): Card? {
         var card: Card? = null
         retrofit.addUnknownCard(token, unknownCardRequest).enqueue(
             object : Callback<CardResponse> {
@@ -56,5 +55,25 @@ class CardServiceImpl(
 
             })
         return card
+    }
+
+    override suspend fun getAllCards(token: String): List<Card>? {
+        var cardList: List<Card>? = null
+        retrofit.getAllCards(token).enqueue(
+            object : Callback<List<CardResponse>> {
+                override fun onResponse(
+                    call: Call<List<CardResponse>>,
+                    response: Response<List<CardResponse>>
+                ) {
+                    cardList = response.body()?.map { it.toCard() }
+                    Log.d(Constants.cardServiceLogTag, "getAllCards() successful")
+                }
+                override fun onFailure(call: Call<List<CardResponse>>, t: Throwable) {
+                    cardList = null
+                    Log.d(Constants.cardServiceLogTag, "getAllCards() error")
+                }
+            }
+        )
+        return cardList
     }
 }

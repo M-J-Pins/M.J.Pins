@@ -57,6 +57,9 @@ object AppDependencies {
     private const val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
     private const val retrofitGson = "com.squareup.retrofit2:converter-gson:2.3.0"
 
+    //glide
+    private const val glide = "com.github.bumptech.glide:glide:${Versions.glide}"
+
     val appLibs = listOf(
         kotlinStdLib,
         coreKtx,
@@ -83,6 +86,7 @@ object AppDependencies {
         accompanistPager,
         materialTheme3,
         mt3class,
+        glide
     )
 
     val kaptLibs = listOf(hiltCompiler)

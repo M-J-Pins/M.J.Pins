@@ -40,5 +40,7 @@ object Versions {
 
     const val materialTheme3 = "1.0.1"
 
+    //glide
+    const val glide = "4.14.2"
 
 }
