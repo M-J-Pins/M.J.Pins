@@ -37,6 +37,7 @@ class ShopSimilarityManager:
 
             db_colors = await ShopCardColor.get(db, shop_id=shop_id)
             db_colors = [] if db_colors is None else db_colors
+
             db_colors = [self.hex_to_rgb(color) for color in db_colors]
             for cur_color in db_colors:
                 max_cur_shop_color_sim = max(

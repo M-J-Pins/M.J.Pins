@@ -12,6 +12,7 @@ from .shops.delete_shop import api_router as delete_shop_router
 from .shops.get_categories import api_router as get_categories_router
 from .shops.get_most_similar_shop import api_router as get_most_similar_shop_router
 from .shops.get_shops import api_router as get_shops_router
+from .wallets.create_wallet import api_router as create_wallet_router
 
 list_of_routes = [
     hard_test_router,
@@ -28,6 +29,7 @@ list_of_routes = [
     get_categories_router,
     add_similarity_data_router,
     get_most_similar_shop_router,
+    create_wallet_router,
 ]
 
 

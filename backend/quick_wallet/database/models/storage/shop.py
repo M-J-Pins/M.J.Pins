@@ -27,7 +27,7 @@ class Shop(BaseTable):
         TEXT,
         nullable=False,
         unique=False,
-        doc="String for map api to find the nearest shop",
+        doc="String for map api to find the nearest shop (search strings separated by the comma)",
     )
     icon_url = Column(TEXT, nullable=False, unique=False, doc="Url to load icon image")
     category = Column(
