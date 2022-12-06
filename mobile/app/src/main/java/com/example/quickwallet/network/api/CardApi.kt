@@ -15,4 +15,5 @@ interface CardApi {
     fun addUnknownCard(@Named("token") token: String, unknownCardRequest: UnknownCardRequest): Call<CardResponse>
     @GET("cards/my")
     fun getAllCards(@Named("token") token: String): Call<List<CardResponse>>
+
 }

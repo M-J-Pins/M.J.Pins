@@ -1,4 +1,5 @@
 import android.annotation.SuppressLint
+import android.media.Image
 import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -6,12 +7,13 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
 
 @SuppressLint("UnsafeOptInUsageError")
 class BarCodeAnalyser(
     private val onBarcodeDetected: (barcodes: Barcode) -> Unit,
-): ImageAnalysis.Analyzer {
+) : ImageAnalysis.Analyzer {
     private var lastAnalyzedTimeStamp = 0L
 
     override fun analyze(image: ImageProxy) {
@@ -22,11 +24,12 @@ class BarCodeAnalyser(
                     .setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS)
                     .build()
                 val barcodeScanner = BarcodeScanning.getClient(options)
-                val imageToProcess = InputImage.fromMediaImage(imageToAnalyze, image.imageInfo.rotationDegrees)
+                val imageToProcess =
+                    InputImage.fromMediaImage(imageToAnalyze, image.imageInfo.rotationDegrees)
 
                 barcodeScanner.process(imageToProcess)
                     .addOnSuccessListener { barcodes ->
-                        barcodes.firstOrNull()?.let {onBarcodeDetected(it)}
+                        barcodes.firstOrNull()?.let { onBarcodeDetected(it) }
                     }
                     .addOnFailureListener { exception ->
                         Log.d("TAG", "BarcodeAnalyser: Something went wrong $exception")
@@ -41,3 +44,11 @@ class BarCodeAnalyser(
         }
     }
 }
+
+fun getImageAnalysis(cameraExecutor: ExecutorService, barcodeAnalyser: BarCodeAnalyser) =
+    ImageAnalysis.Builder()
+        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+        .build()
+        .also {
+            it.setAnalyzer(cameraExecutor, barcodeAnalyser)
+        }

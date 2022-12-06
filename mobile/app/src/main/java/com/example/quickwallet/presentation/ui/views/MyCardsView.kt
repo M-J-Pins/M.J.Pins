@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.Chip
 import androidx.compose.material.icons.Icons
@@ -23,6 +24,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.compose.AppTheme
 import com.example.quickwallet.R
+import com.example.quickwallet.domain.model.cards
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,7 +66,7 @@ fun MyCardsView() {
                             when (it) {
                                 0 -> Icon(
                                     modifier = Modifier.requiredSize(20.dp),
-                                    painter = painterResource(id = R.drawable.subscriptions),
+                                    painter = painterResource(id = R.mipmap.subscriptions),
                                     contentDescription = "",
 
                                     )
@@ -109,7 +111,7 @@ fun MyCardsView() {
                 val recentCategoryRightPadding = createGuidelineFromAbsoluteRight(0.644f)
                 val recentCategoryTopPadding = createGuidelineFromTop(0.123f)
                 val recentCategoryBottomPadding = createGuidelineFromBottom(0.833f)
-                val (search, addBtn, btmDiv, recentCategory, lazyRow) = createRefs()
+                val (search, addBtn, btmDiv, recentCategory, lazyRow, lazyColumn) = createRefs()
 
                 Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.onBackground)
                 Divider(modifier = Modifier.constrainAs(btmDiv) {
@@ -117,15 +119,21 @@ fun MyCardsView() {
                 }, thickness = 1.dp, color = MaterialTheme.colorScheme.onBackground)
                 TextField(modifier = Modifier.constrainAs(search) {
                     top.linkTo(parent.top, margin = 8.dp)
-                    start.linkTo(leftPadding)
-                    end.linkTo(rightPadding)
+                    linkTo(leftPadding,rightPadding)
                     width = Dimension.fillToConstraints
 
                 }, value = "", onValueChange = {}, leadingIcon = {
-                    Icon(imageVector = Icons.Default.Search, "")
+                    Icon(
+                        imageVector = Icons.Default.Search, "",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
                 }, trailingIcon = {
                     IconButton(onClick = { /*TODO*/ }) {
-                        Icon(painter = painterResource(id = R.drawable.filter_alt), "")
+                        Icon(
+                            painter = painterResource(id = R.drawable.filter_alt),
+                            "",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
                     }
                 }, placeholder = {
                     Text(
@@ -144,10 +152,8 @@ fun MyCardsView() {
                 OutlinedButton(
                     modifier = Modifier
                         .constrainAs(addBtn) {
-                            start.linkTo(addLeftPadding)
-                            end.linkTo(addRightPadding)
-                            top.linkTo(addTopPadding)
-                            bottom.linkTo(addBottomPadding)
+                            linkTo(addLeftPadding,addRightPadding)
+                            linkTo(addTopPadding, addBottomPadding)
                             width = Dimension.fillToConstraints
                             height = Dimension.fillToConstraints
                         },
@@ -178,16 +184,41 @@ fun MyCardsView() {
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
-                val categoryBtns by remember { mutableStateOf(listOf("еда","красота","медицина")) }
+                val categoryBtns by remember {
+                    mutableStateOf(
+                        listOf(
+                            "еда",
+                            "красота",
+                            "медицина"
+                        )
+                    )
+                }
                 LazyRow(modifier = Modifier.constrainAs(lazyRow) {
                     start.linkTo(recentCategory.end, 8.dp)
                     end.linkTo(leftPadding)
                     width = Dimension.fillToConstraints
                 }) {
-                    items(categoryBtns.size){
-                        
+                    items(categoryBtns.size) {
+
                     }
                 }
+                val leftCardPadding = createGuidelineFromAbsoluteLeft(0.0639f)
+                val rightCardPadding = createGuidelineFromAbsoluteRight(0.058f)
+                LazyColumn(
+                    modifier = Modifier.constrainAs(lazyColumn){
+                        top.linkTo(addBtn.bottom,16.dp)
+                        bottom.linkTo(parent.bottom, 1.dp)
+                        start.linkTo(leftCardPadding)
+                        end.linkTo(rightCardPadding)
+                        height = Dimension.fillToConstraints
+                        width = Dimension.fillToConstraints
+                    }
+                ) {
+                    items(cards.size){ ind->
+                        FastCard(card = cards[ind])
+                    }
+                }
+
 
             }
         }

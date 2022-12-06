@@ -9,6 +9,7 @@ import com.example.quickwallet.network.model.AuthDataDto
 import com.example.quickwallet.network.model.PhoneNumberDto
 import com.example.quickwallet.network.response.AuthPhoneResponse
 import com.example.quickwallet.presentation.BaseApplication
+import com.example.quickwallet.storage.UserPersistentData
 import com.example.quickwallet.utils.Constants
 import retrofit2.Call
 import retrofit2.Callback
@@ -16,8 +17,9 @@ import retrofit2.Response
 
 class AuthServiceImpl constructor(
     private val retrofit: AuthApi,
-    private val app: BaseApplication
-): AuthService {
+    private val app: BaseApplication,
+    private val userPersistentData: UserPersistentData
+) : AuthService {
 
     override suspend fun phoneAuthRequest(phoneNumber: PhoneNumberDto): String? {
         var description: String? = null
@@ -35,7 +37,8 @@ class AuthServiceImpl constructor(
             })
         return description
     }
-    override suspend fun phoneAuth(authData: AuthDataDto): String?  {
+
+    override suspend fun phoneAuth(authData: AuthDataDto): String? {
         var token: String? = null
         retrofit.phoneAuth(authData).enqueue(
             object : Callback<AuthPhoneResponse> {
@@ -47,15 +50,21 @@ class AuthServiceImpl constructor(
                         )
                     }
                 }
-                override fun onResponse(call: Call<AuthPhoneResponse>, response: Response<AuthPhoneResponse>) {
+
+                override fun onResponse(
+                    call: Call<AuthPhoneResponse>,
+                    response: Response<AuthPhoneResponse>
+                ) {
                     token = response.body()?.token
+                    token?.let {
+                        userPersistentData.save(
+                            data = token!!,
+                            storage = Constants.sharedPreferencesStorageName,
+                            key = Constants.sharedPreferencesTokenName
+                        )
+                        Log.d(Constants.authLogTag, it)
+                    }
 
-                    token?.let { app.applicationContext.getSharedPreferences(
-                        Constants.sharedPreferencesStorageName,
-                        ComponentActivity.MODE_PRIVATE
-                    ).edit().putString("token",token).apply()}
-
-                    token?.let { Log.d(Constants.authLogTag, it) }
                 }
             })
         return token

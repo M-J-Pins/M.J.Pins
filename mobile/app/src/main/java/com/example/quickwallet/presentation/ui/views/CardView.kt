@@ -94,7 +94,7 @@ fun FastCardView(
                                 when (it) {
                                     0 -> Icon(
                                         modifier = Modifier.requiredSize(20.dp),
-                                        painter = painterResource(id = R.drawable.subscriptions),
+                                        painter = painterResource(id = R.mipmap.subscriptions),
                                         contentDescription = "",
 
                                     )
@@ -172,7 +172,7 @@ Column(modifier = Modifier){
 fun FastCard(card: Card) {
     Card(
         modifier = Modifier
-            .requiredWidth(316.dp)
+            .fillMaxWidth()
             .requiredHeight(186.dp),
         shape = RoundedCornerShape(8.dp)
     ) {

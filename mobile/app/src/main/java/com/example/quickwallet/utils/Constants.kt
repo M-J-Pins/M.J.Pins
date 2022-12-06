@@ -5,6 +5,7 @@ object Constants  {
     const val authViewModelLogTag = "AuthViewModel"
     const val cameraPreviewLogTag = "CameraPreview"
     const val cardServiceLogTag = "CardServiceImpl"
+    const val photoViewLogTag = "CameraPreview"
 
     const val sharedPreferencesStorageName = "app_storage"
     const val sharedPreferencesTokenName = "token"

@@ -17,9 +17,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusProperties
-import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.focusOrder
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -30,11 +30,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import com.example.compose.AppTheme
 import com.example.quickwallet.R
 import com.example.quickwallet.presentation.viewmodel.AuthViewModel
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.example.quickwallet.utils.PhoneNumberVisualTransformation
 
 @OptIn(
     ExperimentalMaterial3Api::class
@@ -50,39 +52,54 @@ fun SendPhoneNumberView(
         if (viewModel.phoneNumberError.value) {
             Toast.makeText(context, "Что-то пошло не так. Попробуйте еще раз", Toast.LENGTH_LONG)
         }
-        Image(
-            modifier = Modifier
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClick = { focusManager.clearFocus(true) }
-                )
-                .fillMaxSize(),
-            painter = painterResource(R.drawable.gradient),
-            contentDescription = "background_image",
-            contentScale = ContentScale.FillBounds
-        )
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
+        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+            Image(
+                modifier = Modifier
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = { focusManager.clearFocus(true) }
+                    )
+                    .fillMaxSize(),
+                painter = painterResource(R.drawable.gradient),
+                contentDescription = "background_image",
+                contentScale = ContentScale.FillBounds
+            )
+            val leftPadding = createGuidelineFromAbsoluteLeft(0.0444f)
+            val rightPadding = createGuidelineFromAbsoluteRight(0.0444f)
+            val sendTextTop = createGuidelineFromTop(0.2675f)
+            val sendTextBottom = createGuidelineFromBottom(0.69f)
+            val textFieldBottom = createGuidelineFromBottom(0.59f)
+            val (enterPhoneText, textField, button, btnText) = createRefs()
             Text(
-                modifier = Modifier.offset(y = 198.dp),
+                modifier = Modifier
+                    .constrainAs(enterPhoneText) {
+                        linkTo(leftPadding, rightPadding)
+                        linkTo(sendTextTop, sendTextBottom)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.fillToConstraints
+                    }
+                    .fillMaxWidth(),
                 text = "Введите номер телефона",
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onBackground
             )
             OutlinedTextField(
                 modifier = Modifier
-                    .offset(y = 222.dp)
+                    .constrainAs(textField) {
+                        linkTo(leftPadding, rightPadding)
+                        width = Dimension.fillToConstraints
+                        top.linkTo(enterPhoneText.bottom, 24.dp)
+                        bottom.linkTo(textFieldBottom)
+                        height = Dimension.fillToConstraints
+                    }
                     .border(
                         width = 1.dp,
                         color = MaterialTheme.colorScheme.onBackground,
                         shape = RoundedCornerShape(4.dp)
-                    )
-                    .fillMaxWidth(),
+                    ),
                 value = viewModel.phoneNumber.value,
+                visualTransformation = PhoneNumberVisualTransformation(),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     textColor = MaterialTheme.colorScheme.onBackground,
                     containerColor = Color.Transparent,
@@ -92,7 +109,6 @@ fun SendPhoneNumberView(
                     Text(
                         "+ 7 000 000 00 00",
                         style = MaterialTheme.typography.titleMedium,
-//                        color = Color(0x606C6C)
                     )
                 },
                 singleLine = true,
@@ -100,31 +116,45 @@ fun SendPhoneNumberView(
                     keyboardType = KeyboardType.Phone,
                     imeAction = ImeAction.Done
                 ),
-                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus(true) })
+                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus(true) }
+                )
             )
+            val buttonBottom = createGuidelineFromBottom(0.109f)
+            val buttonTop = createGuidelineFromTop(0.811f)
             OutlinedButton(
                 modifier = Modifier
-                    .offset(y = 560.dp)
-                    .height(73.dp)
+                    .constrainAs(button) {
+                        linkTo(leftPadding, rightPadding)
+                        linkTo(buttonTop, buttonBottom)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.fillToConstraints
+                    }
                     .border(
                         width = 2.dp,
                         color = MaterialTheme.colorScheme.onBackground,
                         shape = RoundedCornerShape(36.dp)
-                    )
-                    .fillMaxWidth(),
+                    ),
 
                 onClick = {
-                    viewModel.sendPhoneNumber()
-                    navController.navigate("send-code")
+                    if (viewModel.phoneNumber.value.isBlank() ||
+                        viewModel.phoneNumber.value.contains(" ")
+                    ) {
+                        focusManager.moveFocus(FocusDirection.Up)
+                    } else {
+                        viewModel.sendPhoneNumber()
+                        viewModel.startTimer()
+                        navController.navigate("send-code")
+                    }
                 },
             ) {
                 Text(
-                    "Продолжить",
+                    text = "Продолжить",
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
+
     }
 }
 
@@ -152,13 +182,20 @@ fun SendCodeView(
             contentDescription = "background_image",
             contentScale = ContentScale.FillBounds
         )
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
+        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+            val (iconButton, sendCodeMainText, helperText, sendAgainButton) = createRefs()
+
+            val enterCodeTextTop = createGuidelineFromTop(0.125f)
+            val enterCodeTextBottom = createGuidelineFromBottom(0.79f)
+
+            val leftPadding16 = createGuidelineFromAbsoluteLeft(0.0444f)
+            val rightPadding16 = createGuidelineFromAbsoluteRight(0.0444f)
+            val backBtnTop = createGuidelineFromTop(0.075f)
             IconButton(
-                modifier = Modifier.offset(y = 20.dp),
+                modifier = Modifier.constrainAs(iconButton) {
+                    start.linkTo(leftPadding16)
+                    top.linkTo(backBtnTop)
+                },
                 onClick = { navController.popBackStack() }
             ) {
                 Icon(
@@ -168,91 +205,157 @@ fun SendCodeView(
             }
             Text(
                 modifier = Modifier
-                    .offset(y = 36.dp),
+                    .constrainAs(sendCodeMainText) {
+                        linkTo(enterCodeTextTop, enterCodeTextBottom)
+                        height = Dimension.fillToConstraints
+                        linkTo(leftPadding16, rightPadding16, 1.dp)
+                        width = Dimension.fillToConstraints
+                    },
                 text = "Введите код\nподтверждения",
                 style = MaterialTheme.typography.headlineMedium
             )
+            val helperTextBottom = createGuidelineFromBottom(0.7325f)
             Text(
                 modifier = Modifier
-                    .offset(y = 44.dp),
+                    .constrainAs(helperText) {
+                        linkTo(leftPadding16, rightPadding16)
+                        width = Dimension.fillToConstraints
+                        top.linkTo(sendCodeMainText.bottom, 8.dp)
+                        bottom.linkTo(helperTextBottom)
+                        height = Dimension.fillToConstraints
+                    },
                 text = "Сейчас вам позвонят! Введите последние 4\nцифры номера, " +
                         "с которого поступил звонок",
                 style = MaterialTheme.typography.bodyLarge
             )
-            Row(
+            val codeCellTop = createGuidelineFromTop(0.34f)
+            val codeCellBottom = createGuidelineFromBottom(0.59f)
+            val (cell0, cell1, cell2, cell3) = createRefs()
+            val leftCell = createGuidelineFromAbsoluteLeft(0.0389f)
+            val (f0, f1, f2, f3) = FocusRequester.createRefs()
+            CommonOtpTextField(
                 modifier = Modifier
-                    .offset(y = 102.dp)
-                    .fillMaxWidth(),
-            ) {
-                val (item1, item2, item3, item4) = FocusRequester.createRefs()
-                CommonOtpTextField(
-                    modifier = Modifier
-                        .offset(x = (-2).dp)
-                        .focusRequester(item1)
-                        .focusProperties {
-                            next = item2
-                            previous = item1
-                        },
-                    otp = viewModel.opt0.value,
-                    index = 0,
-                    onOptChange = viewModel::onCodeCellChange
-                )
-                CommonOtpTextField(
-                    modifier = Modifier
-                        .offset(x = 34.dp)
-                        .focusRequester(item2)
-                        .focusProperties {
-                            next = item3
-                            previous = item1
-                        },
-                    otp = viewModel.opt1.value,
-                    index = 1,
-                    onOptChange = viewModel::onCodeCellChange
-                )
-                CommonOtpTextField(
-                    modifier = Modifier
-                        .offset(x = 70.dp)
-                        .focusRequester(item3)
-                        .focusProperties {
-                            next = item4
-                            previous = item2
-                        },
-                    otp = viewModel.opt2.value,
-                    index = 2,
-                    onOptChange = viewModel::onCodeCellChange
-                )
-                CommonOtpTextField(
-                    modifier = Modifier
-                        .offset(x = 106.dp)
-                        .focusRequester(item4)
-                        .focusProperties {
-                            next = item4
-                            previous = item3
-                        },
-                    otp = viewModel.opt3.value,
-                    index = 3,
-                    onOptChange = viewModel::onCodeCellChange
-                )
-            }
+                    .constrainAs(cell0) {
+                        linkTo(codeCellTop, codeCellBottom)
+                        height = Dimension.fillToConstraints
+                        start.linkTo(leftCell)
+                        width = Dimension.ratio("1:1")
+                    },
+                otp = viewModel.opt0.value,
+                index = 0,
+                onOptChange = viewModel::onCodeCellChange,
+                isCodeError = viewModel.isWrongCode.value,
+            )
+            CommonOtpTextField(
+                modifier = Modifier
+                    .constrainAs(cell1) {
+                        linkTo(codeCellTop, codeCellBottom)
+                        height = Dimension.fillToConstraints
+                        start.linkTo(cell0.end, 32.dp)
+                        width = Dimension.ratio("1:1")
+                    },
+                otp = viewModel.opt1.value,
+                index = 1,
+                onOptChange = viewModel::onCodeCellChange,
+                isCodeError = viewModel.isWrongCode.value,
+            )
+            CommonOtpTextField(
+                modifier = Modifier
+                    .constrainAs(cell2) {
+                        linkTo(codeCellTop, codeCellBottom)
+                        height = Dimension.fillToConstraints
+                        start.linkTo(cell1.end, 32.dp)
+                        width = Dimension.ratio("1:1")
+                    },
+                otp = viewModel.opt2.value,
+                index = 2,
+                onOptChange = viewModel::onCodeCellChange,
+                isCodeError = viewModel.isWrongCode.value,
+            )
+            CommonOtpTextField(
+                modifier = Modifier
+                    .constrainAs(cell3) {
+                        linkTo(codeCellTop, codeCellBottom)
+                        height = Dimension.fillToConstraints
+                        start.linkTo(cell2.end, 32.dp)
+                        width = Dimension.ratio("1:1")
+                    },
+                otp = viewModel.opt3.value,
+                index = 3,
+                onOptChange = viewModel::onCodeCellChange,
+                isCodeError = viewModel.isWrongCode.value,
+            )
+
+            checkFilledCells(
+                areFilled = viewModel.isAllCodeCellsFilled.value,
+                onSuccess = viewModel::sendPhoneAuth
+            )
+
+            checkCodeResult(
+                viewModel.isWrongCode.value,
+                viewModel.isTokenReceived.value,
+                navController
+            )
+
+            val sendAgainButtonTop = createGuidelineFromTop(0.44f)
+            val sendAgainButtonBottom = createGuidelineFromBottom(0.509f)
+
             OutlinedButton(
                 modifier = Modifier
-                    .offset(y = 336.dp)
-//                        .requiredWidth(236.dp)
-                    .padding(16.dp, 12.dp),
-//                        .fillMaxWidth(),
+                    .constrainAs(sendAgainButton) {
+                        end.linkTo(cell3.end)
+                        linkTo(sendAgainButtonTop, sendAgainButtonBottom)
+                        height = Dimension.fillToConstraints
+                    },
 
                 onClick = {
-                    viewModel.sendPhoneAuth()
-                    navController.navigate("token")
+                    if (viewModel.isWrongCode.value) {
+
+                        viewModel.sendPhoneNumber()
+                    }
                 },
             ) {
-                Text(
-                    "Отправить повторно через 0:30",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                ConditionalText(ticks = viewModel.backOrderTimerTicks.value)
             }
         }
+    }
+}
+
+@Composable
+fun ConditionalText(ticks: Int) {
+    if (ticks == 1) {
+        Text(
+            "Отправить повторно",
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
+    } else {
+        Text(
+            "Отправить повторно через 0:${ticks}",
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
+    }
+}
+
+@Composable
+fun checkFilledCells(
+    areFilled: Boolean,
+    onSuccess: () -> Unit
+) {
+    if (areFilled) {
+        onSuccess()
+    }
+}
+
+@Composable
+fun checkCodeResult(
+    isCodeError: Boolean,
+    responseReceived: Boolean,
+    navController: NavController
+) {
+    if (!isCodeError && responseReceived) {
+        navController.navigate("my-cards")
     }
 }
 
@@ -262,21 +365,23 @@ fun CommonOtpTextField(
     modifier: Modifier,
     otp: String,
     index: Int,
-    onOptChange: (cell: String, index: Int) -> Unit
+    onOptChange: (cell: String, index: Int) -> Unit,
+    isCodeError: Boolean
 ) {
-    val max = 1
     OutlinedTextField(
         value = otp,
         singleLine = true,
         onValueChange = {
             onOptChange(it, index)
         },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Phone,
+            imeAction = ImeAction.Next
+        ),
         shape = RoundedCornerShape(4.dp),
         modifier = modifier
             .requiredWidth(56.dp)
             .wrapContentSize(align = Alignment.Center),
-
         maxLines = 1,
         textStyle = LocalTextStyle.current.copy(
             textAlign = TextAlign.Center,
@@ -284,7 +389,8 @@ fun CommonOtpTextField(
             fontStyle = MaterialTheme.typography.headlineMedium.fontStyle,
             fontSize = MaterialTheme.typography.headlineMedium.fontSize,
             fontWeight = FontWeight.W600,
-        )
+        ),
+        isError = isCodeError
     )
 
 }

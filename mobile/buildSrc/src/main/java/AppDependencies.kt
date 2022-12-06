@@ -60,6 +60,8 @@ object AppDependencies {
     //glide
     private const val glide = "com.github.bumptech.glide:glide:${Versions.glide}"
 
+    private const val libphonenumber = "com.googlecode.libphonenumber:libphonenumber:${Versions.libPhone}"
+
     val appLibs = listOf(
         kotlinStdLib,
         coreKtx,
@@ -87,7 +89,8 @@ object AppDependencies {
         materialTheme3,
         mt3class,
         glide,
-        constrainLayout
+        constrainLayout,
+        libphonenumber
     )
 
     val kaptLibs = listOf(hiltCompiler)

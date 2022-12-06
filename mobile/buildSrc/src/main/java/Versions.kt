@@ -46,4 +46,7 @@ object Versions {
     //layout
     const val constraintLayout = "1.0.1"
 
+    //libphone
+    const val libPhone = "8.13.0"
+
 }
