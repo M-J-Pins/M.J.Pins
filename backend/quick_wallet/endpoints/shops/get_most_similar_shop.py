@@ -12,10 +12,11 @@ from quick_wallet.schemas.misc import SimilarityRequest
 from quick_wallet.schemas.shops import ShopResponse
 from quick_wallet.services.misc import JWTManager, ShopSimilarityManager
 
+
 api_router = APIRouter(prefix="/shops")
 
 
-@api_router.post(
+@api_router.get(
     "/similarity/most",
     response_model=ShopResponse,
     status_code=status.HTTP_200_OK,
@@ -35,18 +36,11 @@ api_router = APIRouter(prefix="/shops")
     },
 )
 async def get_most_similar_shop(
-    request: SimilarityRequest = Body(
-        ...,
-        example={
-            "token": "Admin token",
-            "card_text": "Магнит косметик М",
-            "card_color": "2271b3",
-        },
-    ),
+    request: SimilarityRequest = Depends(),
     db: AsyncSession = Depends(get_session),
 ):
     """
-    Ручка принимает текст с карты и цвет
+    Ручка принимает фото передней части карты
     Возвращает наиболее вероятный магазин
     """
     user_id = JWTManager().id_from_jwt(request.token)

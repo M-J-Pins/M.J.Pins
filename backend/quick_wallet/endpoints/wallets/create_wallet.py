@@ -1,7 +1,7 @@
 from typing import List
 from uuid import UUID
 
-from fastapi import APIRouter, Body, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, Body, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
@@ -9,13 +9,13 @@ from quick_wallet.database.connection import get_session
 from quick_wallet.schemas.wallets import CreateWalletRequest, WalletResponse
 from quick_wallet.services.misc import JWTManager, ConvertManager
 from quick_wallet.services.wallets import WalletManager, WalletActionResult
-from quick_wallet.database.models.storage import Wallet
+
 
 api_router = APIRouter(prefix="/wallets")
 
 
 @api_router.post(
-    "/create",
+    "/",
     response_model=WalletResponse,
     status_code=status.HTTP_200_OK,
     responses={
@@ -30,11 +30,11 @@ api_router = APIRouter(prefix="/wallets")
         },
     },
 )
-async def add_shop(
+async def create_wallet(
     request: CreateWalletRequest = Body(
         ...,
         example={
-            "token": "<UUID token>",
+            "token": "<JWT>",
             "name": "Семья",
             "cards": [
                 "<UUID card 1>",

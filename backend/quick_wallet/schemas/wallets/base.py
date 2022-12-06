@@ -2,10 +2,15 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from pydantic import BaseModel, constr
+from pydantic import BaseModel, constr, validator
 from pydantic.fields import Field, List
 
 from quick_wallet.schemas.cards import CardResponse
+from quick_wallet.schemas.base import AuthorizedRequest
+
+
+class WalletId(AuthorizedRequest):
+    wallet_id: UUID
 
 
 class WalletCardScheme(CardResponse):
@@ -14,6 +19,11 @@ class WalletCardScheme(CardResponse):
         strip_whitespace=True,
         regex=r"^(\+)[1-9][0-9\-\(\)\.]{9,15}$",
     )
+
+    @validator("owner")
+    def validate_phone(cls, phone):
+        new_phone = [p if p.isdigit() else "" for p in phone]
+        return "".join(new_phone)
 
 
 class WalletResponse(BaseModel):
@@ -25,6 +35,13 @@ class WalletResponse(BaseModel):
             regex=r"^(\+)[1-9][0-9\-\(\)\.]{9,15}$",
         )
     ]
+
+    @validator("user_phones")
+    def validate_phone(cls, phones):
+        new_phones = []
+        for phone in phones:
+            new_phones.append("".join([p if p.isdigit() else "" for p in phone]))
+        return new_phones
 
 
 class WalletShortInfo(BaseModel):

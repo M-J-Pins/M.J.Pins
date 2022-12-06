@@ -12,7 +12,7 @@ api_router = APIRouter(prefix="/shops")
 
 
 @api_router.post(
-    "/similarity/add",
+    "/similarity",
     response_model=BaseResponse,
     status_code=status.HTTP_200_OK,
     responses={

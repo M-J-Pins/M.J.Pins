@@ -8,11 +8,12 @@ from quick_wallet.database.models import Shop
 from quick_wallet.schemas.shops import AddShopRequest, ShopResponse
 from quick_wallet.services.misc import AssetManager
 
+
 api_router = APIRouter(prefix="/shops")
 
 
 @api_router.post(
-    "/add",
+    "/",
     response_model=ShopResponse,
     status_code=status.HTTP_200_OK,
     responses={

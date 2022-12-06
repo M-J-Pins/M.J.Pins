@@ -12,7 +12,7 @@ api_router = APIRouter(prefix="/cards")
 
 
 @api_router.post(
-    "/add_standard",
+    "/standard",
     response_model=CardResponse,
     status_code=status.HTTP_200_OK,
     responses={

@@ -7,7 +7,7 @@ from quick_wallet.schemas.shops import CategoryListResponse
 api_router = APIRouter(prefix="/shops")
 
 
-@api_router.post(
+@api_router.get(
     "/categories",
     response_model=CategoryListResponse,
     status_code=status.HTTP_200_OK,
