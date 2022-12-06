@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from quick_wallet.database.models import Card
 from quick_wallet.database.models.account import User
 from quick_wallet.database.models.storage import Wallet, WalletCard, WalletAccess
-from quick_wallet.schemas.wallets import WalletResponse, WalletCardScheme
+from quick_wallet.schemas.wallets import WalletResponse, WalletCardScheme, WalletListResponse, WalletShortInfo
 from quick_wallet.schemas.cards import CardResponse
 
 
@@ -51,5 +51,19 @@ class ConvertManager:
             user_phones=user_phones
         )
 
+    @staticmethod
+    async def user_id2wallet_list_scheme(db: AsyncSession, user_id: UUID) -> WalletListResponse:
+        wallet_ids: List[UUID] = [wallet_access.id for wallet_access in await WalletAccess.get_all(db, user_id=user_id)]
+        short_wallets: List[WalletShortInfo] = []
+        for wallet_id in wallet_ids:
+            db_wallet: Wallet = await Wallet.get(db, id=wallet_id)
+            short_wallets.append(
+                WalletShortInfo(
+                    id=db_wallet.id,
+                    name=db_wallet.name,
+                    color=db_wallet.color,
+                    editable=(True if user_id == db_wallet.owner_id else False)
+                )
+            )
 
-
+        return WalletListResponse(wallets=short_wallets)

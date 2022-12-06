@@ -22,6 +22,16 @@ class ShopSimilarityManager:
         card_color: str,
         minimal_similarity: int = 0,
     ) -> UUID:
+        """
+        This algorithm will analyse the text extracted from the photo and avg color to choose the most similar shop
+
+        :param db: Async session
+        :param shop_ids: List of shops id to search throw
+        :param card_text: Text extracted from the front side card photo
+        :param card_color: Average color of the photo
+        :param minimal_similarity: Minimal similarity rate to choose shop
+        :return: ID of the most similar shop
+        """
         best_id = None
         max_sim = 0
         for shop_id in shop_ids:

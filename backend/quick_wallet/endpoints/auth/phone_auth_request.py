@@ -26,7 +26,7 @@ api_router = APIRouter(prefix="/auth")
         },
     },
 )
-async def auth_request_admin(
+async def auth_request(
     request: PhoneAuthRequestRequest = Body(
         ...,
         example={

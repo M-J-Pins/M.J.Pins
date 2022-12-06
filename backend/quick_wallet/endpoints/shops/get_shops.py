@@ -11,8 +11,8 @@ from quick_wallet.schemas.shops import ShopListResponse, ShopResponse
 api_router = APIRouter(prefix="/shops")
 
 
-@api_router.post(
-    "/all",
+@api_router.get(
+    "/",
     response_model=ShopListResponse,
     status_code=status.HTTP_200_OK,
     responses={

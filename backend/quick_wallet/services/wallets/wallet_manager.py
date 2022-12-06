@@ -43,7 +43,10 @@ class WalletManager:
     async def give_access(
         db: AsyncSession, wallet_owner_id, wallet_id: UUID, user_id: UUID
     ) -> (WalletActionResult, WalletAccess):
-        if wallet_owner_id != await Wallet.get(db, id=wallet_id):
+        if await Wallet.get(db, id=wallet_id) is None:
+            return WalletActionResult.NO_WALLET, None
+
+        if wallet_owner_id != (await Wallet.get(db, id=wallet_id)).owner_id:
             return WalletActionResult.NO_ACCESS, None
 
         if await User.get(db, id=user_id) is None:
@@ -62,6 +65,12 @@ class WalletManager:
         if db_card is None:
             return WalletActionResult.NO_CARD, None
 
+        if await Wallet.get(db, id=wallet_id) is None:
+            return WalletActionResult.NO_WALLET, None
+
+        if await WalletAccess.get(db, user_id=card_owner_id) is None:
+            return WalletActionResult.NO_ACCESS, None
+
         if card_owner_id != db_card.owner_id:
             return WalletActionResult.NO_ACCESS, None
 
@@ -74,10 +83,13 @@ class WalletManager:
     async def delete_card(
         db: AsyncSession, card_owner_id, wallet_id: UUID, card_id: UUID
     ) -> WalletActionResult:
-        if await Card.get(db, id=card_id) is None:
+        if await Wallet.get(db, id=wallet_id) is None:
+            return WalletActionResult.NO_WALLET
+
+        if await WalletCard.get(db, card_id=card_id, wallet_id=wallet_id) is None:
             return WalletActionResult.NO_CARD
 
-        if card_owner_id != (await Card.get(db, id=card_id)).owner_id:
+        if await WalletCard.get(db, card_id=card_id, card_owner_id=card_owner_id) is None:
             return WalletActionResult.NO_ACCESS
         await WalletCard.delete(db, wallet_id=wallet_id, card_id=card_id)
 
@@ -100,10 +112,13 @@ class WalletManager:
         return WalletActionResult.SUCCESS
 
     @staticmethod
-    async def leave_wallet(db: AsyncSession, user_id: UUID, wallet_id: UUID):
+    async def leave_wallet(db: AsyncSession, user_id: UUID, wallet_id: UUID) -> WalletActionResult:
         db_wallet: Wallet = await Wallet.get(db, id=wallet_id)
         if db_wallet is None:
             return WalletActionResult.NO_WALLET
+
+        if await WalletAccess.get(db, user_id=user_id, wallet_id=wallet_id) is None:
+            return WalletActionResult.NO_ACCESS
 
         if user_id == db_wallet.owner_id:
             return WalletActionResult.FORBIDDEN
@@ -113,7 +128,7 @@ class WalletManager:
         return WalletActionResult.SUCCESS
 
     @staticmethod
-    async def delete_wallet(db: AsyncSession, wallet_owner_id: UUID, wallet_id: UUID):
+    async def delete_wallet(db: AsyncSession, wallet_owner_id: UUID, wallet_id: UUID) -> WalletActionResult:
         db_wallet: Wallet = await Wallet.get(db, id=wallet_id)
         if db_wallet is None:
             return WalletActionResult.NO_WALLET
