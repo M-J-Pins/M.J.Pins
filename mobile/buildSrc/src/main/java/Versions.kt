@@ -43,4 +43,7 @@ object Versions {
     //glide
     const val glide = "4.14.2"
 
+    //layout
+    const val constraintLayout = "1.0.1"
+
 }

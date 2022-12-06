@@ -19,10 +19,7 @@ import androidx.compose.ui.util.lerp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.quickwallet.presentation.ui.views.SendPhoneNumberView
-import com.example.quickwallet.presentation.ui.views.CameraView
-import com.example.quickwallet.presentation.ui.views.FastCardView
-import com.example.quickwallet.presentation.ui.views.SendCodeView
+import com.example.quickwallet.presentation.ui.views.*
 import com.example.quickwallet.presentation.viewmodel.AuthViewModel
 import com.example.quickwallet.presentation.viewmodel.CardViewModel
 import com.example.quickwallet.utils.Constants
@@ -65,7 +62,7 @@ class MainActivity : ComponentActivity() {
 //if (!isToken) "send-phone" else "token"
             NavHost(
                 navController = navController,
-                startDestination = "fast-card"
+                startDestination = "my-cards"
             ) {
                 composable("send-phone") {
                     SendPhoneNumberView(
@@ -96,6 +93,9 @@ class MainActivity : ComponentActivity() {
                         viewModel = cardViewModel,
                         navController = navController
                     )
+                }
+                composable("my-cards") {
+                    MyCardsView()
                 }
             }
         }

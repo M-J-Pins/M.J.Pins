@@ -12,13 +12,13 @@ object AppDependencies {
     private const val composeMaterial = "androidx.compose.material:material:${Versions.compose}"
     private const val composeMaterialIconsExtended =
         "androidx.compose.material:material-icons-extended:${Versions.compose}"
-//    private const val composePreview = "androidx.compose.ui:ui-tooling-preview:${Versions.compose}"
     private const val composeActivity =
         "androidx.activity:activity-compose:${Versions.composeActivity}"
     private const val composeViewModel =
         "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.lifecycle}"
     private const val materialTheme3 = "androidx.compose.material3:material3:${Versions.materialTheme3}"
     private const val mt3class = "androidx.compose.material3:material3-window-size-class:${Versions.materialTheme3}"
+    private const val constrainLayout = "androidx.constraintlayout:constraintlayout-compose:${Versions.constraintLayout}"
 
     //navigation
     private const val navigation = "androidx.navigation:navigation-compose:${Versions.nav}"
@@ -86,7 +86,8 @@ object AppDependencies {
         accompanistPager,
         materialTheme3,
         mt3class,
-        glide
+        glide,
+        constrainLayout
     )
 
     val kaptLibs = listOf(hiltCompiler)

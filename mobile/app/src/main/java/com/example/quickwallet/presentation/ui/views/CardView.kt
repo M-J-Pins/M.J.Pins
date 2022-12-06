@@ -15,11 +15,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
@@ -112,6 +114,7 @@ fun FastCardView(
             }
         ) {
             CardWheel()
+//            FastCard(card = cards[0])
         }
     }
 
@@ -121,12 +124,13 @@ fun FastCardView(
 @Composable
 fun CardWheel() {
 
+Column(modifier = Modifier){
     VerticalPager(
         count = 3,
         // Add 32.dp horizontal padding to 'center' the pages
-        contentPadding = PaddingValues(vertical = 350.dp),
-
-//        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 220.dp)
+            .fillMaxWidth()
     ) { page ->
         Card(
             Modifier
@@ -150,15 +154,16 @@ fun CardWheel() {
                     alpha = lerp(
                         start = 0.2f,
                         stop = 1f,
-                        fraction = 3f - pageOffset.coerceIn(0f, 3f)
+                        fraction = 3f - 3 * pageOffset.coerceIn(0f, 3f)
                     )
                 }
-                .fillMaxWidth()
                 .aspectRatio(1f)
         ) {
             FastCard(card = cards[page])
         }
     }
+}
+
 }
 
 

@@ -20,6 +20,3 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -keep class com.google.** { *; }
--keepclassmembers class * extends androidx.datastore.preferences.protobuf.GeneratedMessageLite {
-    <fields>;
-}

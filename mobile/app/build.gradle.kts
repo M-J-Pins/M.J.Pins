@@ -58,6 +58,11 @@ dependencies {
     implementation(AppDependencies.appLibs)
     implementation("androidx.appcompat:appcompat:1.4.1")
     implementation(files("C:\\Users\\Maxim\\Documents\\accompanist-systemuicontroller-0.28.0.aar"))
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+
+    debugImplementation("androidx.compose.ui:ui-tooling:1.3.0")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.3.0")
+
     runtimeOnly("dev.chrisbanes.snapper:snapper:0.3.0")
     runtimeOnly("com.google.android.material:material:1.6.1")
     kapt(AppDependencies.kaptLibs)
