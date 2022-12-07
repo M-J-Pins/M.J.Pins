@@ -2,6 +2,9 @@ package com.example.quickwallet.network.services.auth.impl
 
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
 import com.example.quickwallet.network.ServiceBuilder
 import com.example.quickwallet.network.api.AuthApi
 import com.example.quickwallet.network.services.auth.AuthService
@@ -38,27 +41,27 @@ class AuthServiceImpl constructor(
         return description
     }
 
-    override suspend fun phoneAuth(authData: AuthDataDto): String? {
-        var token: String? = null
+    override suspend fun phoneAuth(authData: AuthDataDto): LiveData<String> {
+        val tokenLiveData = MutableLiveData<String>()
+
         retrofit.phoneAuth(authData).enqueue(
             object : Callback<AuthPhoneResponse> {
                 override fun onFailure(call: Call<AuthPhoneResponse>, t: Throwable) {
-                    (if (token != null) token else "cannot get token")?.let {
-                        Log.d(
-                            Constants.authLogTag,
-                            it
-                        )
-                    }
+                    Log.d(
+                        Constants.authLogTag,
+                        "cannot get token"
+                    )
                 }
 
                 override fun onResponse(
                     call: Call<AuthPhoneResponse>,
                     response: Response<AuthPhoneResponse>
                 ) {
-                    token = response.body()?.token
-                    token?.let {
+                    tokenLiveData.value = response.body()?.token
+
+                    tokenLiveData.value?.let {
                         userPersistentData.save(
-                            data = token!!,
+                            data = it,
                             storage = Constants.sharedPreferencesStorageName,
                             key = Constants.sharedPreferencesTokenName
                         )
@@ -67,6 +70,6 @@ class AuthServiceImpl constructor(
 
                 }
             })
-        return token
+        return tokenLiveData
     }
 }

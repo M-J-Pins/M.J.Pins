@@ -1,11 +1,13 @@
 package com.example.quickwallet.presentation.ui.views
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Chip
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -14,6 +16,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -22,9 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.constraintlayout.helper.widget.Flow
 import com.example.compose.AppTheme
 import com.example.quickwallet.R
 import com.example.quickwallet.domain.model.cards
+import com.example.quickwallet.utils.glide.DEFAULT_RECIPE_IMAGE
+import com.example.quickwallet.utils.glide.loadPicture
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -204,22 +212,44 @@ fun MyCardsView() {
                 }
                 val leftCardPadding = createGuidelineFromAbsoluteLeft(0.0639f)
                 val rightCardPadding = createGuidelineFromAbsoluteRight(0.058f)
-                LazyColumn(
-                    modifier = Modifier.constrainAs(lazyColumn){
-                        top.linkTo(addBtn.bottom,16.dp)
-                        bottom.linkTo(parent.bottom, 1.dp)
-                        start.linkTo(leftCardPadding)
-                        end.linkTo(rightCardPadding)
-                        height = Dimension.fillToConstraints
-                        width = Dimension.fillToConstraints
-                    }
-                ) {
-                    items(cards.size){ ind->
-                        FastCard(card = cards[ind])
-                    }
-                }
+               Box(modifier = Modifier
+                   .constrainAs(lazyColumn){
+                   top.linkTo(addBtn.bottom,16.dp)
+                   bottom.linkTo(parent.bottom, 1.dp)
+                   start.linkTo(leftCardPadding)
+                   end.linkTo(rightCardPadding)
+                   width = Dimension.fillToConstraints
+               }) {
 
+                   LazyColumn(
 
+                   ) {
+                       items(cards.size){ ind->
+                           androidx.compose.material.Card(
+                               modifier = Modifier
+                                   .fillMaxWidth()
+                                   .requiredHeight(186.dp),
+                               shape = RoundedCornerShape(8.dp)
+                           ) {
+                               cards[ind].imageUrl?.let { url ->
+                                   val image = loadPicture(
+                                       url = url,
+                                       defaultImage = DEFAULT_RECIPE_IMAGE
+                                   ).value
+                                   image?.let { img ->
+                                       Image(
+                                           bitmap = img.asImageBitmap(),
+                                           contentDescription = "Card",
+                                           modifier = Modifier
+                                               .fillMaxWidth(),
+                                           contentScale = ContentScale.FillBounds,
+                                       )
+                                   }
+                               }
+                           }
+                       }
+                   }
+               }
             }
         }
     }

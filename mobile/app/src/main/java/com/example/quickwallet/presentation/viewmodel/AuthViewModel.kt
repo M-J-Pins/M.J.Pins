@@ -3,6 +3,8 @@ package com.example.quickwallet.presentation.viewmodel
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quickwallet.domain.model.AuthData
@@ -44,11 +46,11 @@ constructor(
 
     fun startTimer() {
         viewModelScope.launch {
+            backOrderTimerTicks.value = 30
             while (backOrderTimerTicks.value > 0) {
                 delay(1.seconds)
                 backOrderTimerTicks.value--
             }
-            backOrderTimerTicks.value = 30
         }
     }
 
@@ -93,25 +95,21 @@ constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 Log.d(Constants.authViewModelLogTag, "inside sendPhoneAuth()")
-                val token = async {
-                    repository.phoneAuth(
-                        AuthData(
-                            phoneNumber = phoneNumber.value,
-                            code = opt0.value + opt1.value + opt2.value + opt3.value
-                        )
+                repository.phoneAuth(
+                    AuthData(
+                        phoneNumber = phoneNumber.value,
+                        code = opt0.value + opt1.value + opt2.value + opt3.value
                     )
-                }
-                token.await().let {
-                    if (it == null) {
+                ).observeForever { t ->
+                    if (t == null) {
                         isWrongCode.value = true
                         Log.d(Constants.authViewModelLogTag, "inside token==null")
                     } else {
-                        this@AuthViewModel.token.value = it
+                        this@AuthViewModel.token.value = t
                         isTokenReceived.value = true
                         Log.d(Constants.authViewModelLogTag, this@AuthViewModel.token.value)
                     }
                 }
-
             } catch (e: Exception) {
                 Log.d(Constants.authViewModelLogTag, e.stackTraceToString())
             }

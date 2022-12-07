@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIos
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -37,6 +38,8 @@ import com.example.compose.AppTheme
 import com.example.quickwallet.R
 import com.example.quickwallet.presentation.viewmodel.AuthViewModel
 import com.example.quickwallet.utils.PhoneNumberVisualTransformation
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.seconds
 
 @OptIn(
     ExperimentalMaterial3Api::class
@@ -193,7 +196,7 @@ fun SendCodeView(
             val backBtnTop = createGuidelineFromTop(0.075f)
             IconButton(
                 modifier = Modifier.constrainAs(iconButton) {
-                    start.linkTo(leftPadding16)
+                    start.linkTo(leftPadding16,(-2).dp)
                     top.linkTo(backBtnTop)
                 },
                 onClick = { navController.popBackStack() }
@@ -207,7 +210,7 @@ fun SendCodeView(
                 modifier = Modifier
                     .constrainAs(sendCodeMainText) {
                         linkTo(enterCodeTextTop, enterCodeTextBottom)
-                        height = Dimension.fillToConstraints
+                        height = Dimension.wrapContent
                         linkTo(leftPadding16, rightPadding16, 1.dp)
                         width = Dimension.fillToConstraints
                     },
@@ -222,7 +225,7 @@ fun SendCodeView(
                         width = Dimension.fillToConstraints
                         top.linkTo(sendCodeMainText.bottom, 8.dp)
                         bottom.linkTo(helperTextBottom)
-                        height = Dimension.fillToConstraints
+                        height = Dimension.wrapContent
                     },
                 text = "Сейчас вам позвонят! Введите последние 4\nцифры номера, " +
                         "с которого поступил звонок",
@@ -232,11 +235,10 @@ fun SendCodeView(
             val codeCellBottom = createGuidelineFromBottom(0.59f)
             val (cell0, cell1, cell2, cell3) = createRefs()
             val leftCell = createGuidelineFromAbsoluteLeft(0.0389f)
-            val (f0, f1, f2, f3) = FocusRequester.createRefs()
             CommonOtpTextField(
                 modifier = Modifier
                     .constrainAs(cell0) {
-                        linkTo(codeCellTop, codeCellBottom)
+                        linkTo(helperText.bottom, codeCellBottom)
                         height = Dimension.fillToConstraints
                         start.linkTo(leftCell)
                         width = Dimension.ratio("1:1")
@@ -249,7 +251,7 @@ fun SendCodeView(
             CommonOtpTextField(
                 modifier = Modifier
                     .constrainAs(cell1) {
-                        linkTo(codeCellTop, codeCellBottom)
+                        linkTo(helperText.bottom, codeCellBottom)
                         height = Dimension.fillToConstraints
                         start.linkTo(cell0.end, 32.dp)
                         width = Dimension.ratio("1:1")
@@ -262,7 +264,7 @@ fun SendCodeView(
             CommonOtpTextField(
                 modifier = Modifier
                     .constrainAs(cell2) {
-                        linkTo(codeCellTop, codeCellBottom)
+                        linkTo(helperText.bottom, codeCellBottom)
                         height = Dimension.fillToConstraints
                         start.linkTo(cell1.end, 32.dp)
                         width = Dimension.ratio("1:1")
@@ -275,7 +277,7 @@ fun SendCodeView(
             CommonOtpTextField(
                 modifier = Modifier
                     .constrainAs(cell3) {
-                        linkTo(codeCellTop, codeCellBottom)
+                        linkTo(helperText.bottom, codeCellBottom)
                         height = Dimension.fillToConstraints
                         start.linkTo(cell2.end, 32.dp)
                         width = Dimension.ratio("1:1")

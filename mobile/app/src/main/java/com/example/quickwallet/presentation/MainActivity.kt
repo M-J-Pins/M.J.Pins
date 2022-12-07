@@ -57,7 +57,8 @@ class MainActivity : ComponentActivity() {
 
             NavHost(
                 navController = navController,
-                startDestination = if (activityViewModel.isFirstExecution.value) "send-phone" else "fast-card"
+//                if (activityViewModel.isFirstExecution.value) "send-phone" else "fast-card"
+                startDestination = "send-code"
             ) {
                 composable("send-phone") {
                     SendPhoneNumberView(
