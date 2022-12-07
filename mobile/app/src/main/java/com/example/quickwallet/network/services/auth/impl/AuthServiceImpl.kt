@@ -41,35 +41,7 @@ class AuthServiceImpl constructor(
         return description
     }
 
-    override suspend fun phoneAuth(authData: AuthDataDto): LiveData<String> {
-        val tokenLiveData = MutableLiveData<String>()
-
-        retrofit.phoneAuth(authData).enqueue(
-            object : Callback<AuthPhoneResponse> {
-                override fun onFailure(call: Call<AuthPhoneResponse>, t: Throwable) {
-                    Log.d(
-                        Constants.authLogTag,
-                        "cannot get token"
-                    )
-                }
-
-                override fun onResponse(
-                    call: Call<AuthPhoneResponse>,
-                    response: Response<AuthPhoneResponse>
-                ) {
-                    tokenLiveData.value = response.body()?.token
-
-                    tokenLiveData.value?.let {
-                        userPersistentData.save(
-                            data = it,
-                            storage = Constants.sharedPreferencesStorageName,
-                            key = Constants.sharedPreferencesTokenName
-                        )
-                        Log.d(Constants.authLogTag, it)
-                    }
-
-                }
-            })
-        return tokenLiveData
+    override suspend fun phoneAuth(authData: AuthDataDto): String? {
+        return retrofit.phoneAuth(authData).execute().body()?.token
     }
 }

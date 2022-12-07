@@ -2,6 +2,7 @@ package com.example.quickwallet.repository.impl
 
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.quickwallet.domain.model.AuthData
 import com.example.quickwallet.domain.model.PhoneNumber
 import com.example.quickwallet.domain.utils.DomainMapper
@@ -17,6 +18,7 @@ class AuthRepositoryImpl(
     private val phoneAuthMapper: DomainMapper<AuthDataDto,AuthData>,
     private val phoneMapper: DomainMapper<PhoneNumberDto, PhoneNumber>
 ): AuthRepository {
-    override suspend fun phoneAuth(authData: AuthData): LiveData<String> = authService.phoneAuth(phoneAuthMapper.mapFromDomainModel(authData))
+    val token = MutableLiveData<String>()
+    override suspend fun phoneAuth(authData: AuthData) = authService.phoneAuth(phoneAuthMapper.mapFromDomainModel(authData))
     override suspend fun phoneAuthRequest(phone: PhoneNumber): String? = authService.phoneAuthRequest(phoneMapper.mapFromDomainModel(phone))
 }

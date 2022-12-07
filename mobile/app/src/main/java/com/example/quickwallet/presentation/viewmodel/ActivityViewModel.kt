@@ -2,9 +2,12 @@ package com.example.quickwallet.presentation.viewmodel
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quickwallet.presentation.BaseApplication
+import com.example.quickwallet.presentation.navigation.Screen
 import com.example.quickwallet.storage.UserPersistentData
 import com.example.quickwallet.storage.UserPersistentDataProvider
 import com.example.quickwallet.utils.Constants
@@ -21,6 +24,7 @@ class ActivityViewModel
 ) : ViewModel() {
     val accessToken: MutableState<String> = mutableStateOf("")
     val isFirstExecution: MutableState<Boolean> = mutableStateOf(true)
+
     init {
         fetchToken()
     }

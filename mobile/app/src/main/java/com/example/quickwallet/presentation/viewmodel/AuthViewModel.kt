@@ -4,8 +4,11 @@ import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.example.quickwallet.domain.model.AuthData
 import com.example.quickwallet.domain.model.PhoneNumber
@@ -27,7 +30,6 @@ constructor(
     private val app: BaseApplication
 ) : ViewModel() {
 
-    val token: MutableState<String> = mutableStateOf("")
     val isTokenReceived: MutableState<Boolean> = mutableStateOf(false)
 
     val phoneNumber: MutableState<String> = mutableStateOf("")
@@ -44,7 +46,7 @@ constructor(
 
     val backOrderTimerTicks: MutableState<Int> = mutableStateOf(30)
 
-    fun startTimer() {
+    private fun startTimer() {
         viewModelScope.launch {
             backOrderTimerTicks.value = 30
             while (backOrderTimerTicks.value > 0) {
@@ -84,6 +86,7 @@ constructor(
                 if (repository.phoneAuthRequest(PhoneNumber(phoneNumber.value)) == null) {
                     phoneNumberError.value = true
                 }
+                startTimer()
             } catch (e: Exception) {
                 Log.d(Constants.authViewModelLogTag, e.stackTraceToString())
             }
@@ -96,19 +99,13 @@ constructor(
             try {
                 Log.d(Constants.authViewModelLogTag, "inside sendPhoneAuth()")
                 repository.phoneAuth(
-                    AuthData(
+                    authData = AuthData(
                         phoneNumber = phoneNumber.value,
                         code = opt0.value + opt1.value + opt2.value + opt3.value
                     )
-                ).observeForever { t ->
-                    if (t == null) {
-                        isWrongCode.value = true
-                        Log.d(Constants.authViewModelLogTag, "inside token==null")
-                    } else {
-                        this@AuthViewModel.token.value = t
-                        isTokenReceived.value = true
-                        Log.d(Constants.authViewModelLogTag, this@AuthViewModel.token.value)
-                    }
+                )?.let{
+                    Log.d(Constants.authViewModelLogTag, "Token: $it")
+                    isTokenReceived.value = true
                 }
             } catch (e: Exception) {
                 Log.d(Constants.authViewModelLogTag, e.stackTraceToString())
