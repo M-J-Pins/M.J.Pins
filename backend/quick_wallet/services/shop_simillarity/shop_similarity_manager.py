@@ -1,8 +1,12 @@
 from math import sqrt
+from typing import ByteString, List
 from uuid import UUID
 
+import pytesseract
+from colorthief import ColorThief
+from fastapi import File
+from PIL import Image
 from pysimilar import compare
-from singleton_decorator import singleton
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from quick_wallet.database.models.analysis import ShopCardColor, ShopCardText
@@ -14,12 +18,28 @@ class ShopSimilarityManager:
         self.text_sim_rate = text_sim_rate
         self.color_sim_rate = color_sim_rate
 
-    async def find_the_most_suitable_shop(
+    @staticmethod
+    def get_text_from_image(image: Image) -> str:
+        text = pytesseract.image_to_string(image, lang="rus+eng")
+        print(text)
+        return text
+
+    @staticmethod
+    def count_image_color(image: File) -> ColorRGB:
+        color_thief = ColorThief(image)
+        dominant_color = color_thief.get_color(quality=1)
+        return ColorRGB(
+            r=dominant_color[0],
+            g=dominant_color[1],
+            b=dominant_color[2],
+        )
+
+    async def find_the_most_similar_shop_v1(
         self,
         db: AsyncSession,
         shop_ids: list[UUID],
         card_text: str,
-        card_color: str,
+        card_color: ColorRGB,
         minimal_similarity: int = 0,
     ) -> UUID:
         """
@@ -38,21 +58,28 @@ class ShopSimilarityManager:
             max_cur_shop_text_sim = 0
             max_cur_shop_color_sim = 0
 
-            db_texts = await ShopCardText.get(db, shop_id=shop_id)
+            db_texts: List[ShopCardText] = await ShopCardText.get_all(
+                db, shop_id=shop_id
+            )
             db_texts = [] if db_texts is None else db_texts
             for cur_text in db_texts:
+                print(f"!!!!! {cur_text} !!!\n\n")
                 max_cur_shop_text_sim = max(
-                    max_cur_shop_text_sim, self.count_text_sim(card_text, cur_text)
+                    max_cur_shop_text_sim, self.count_text_sim(card_text, cur_text.text)
                 )
 
-            db_colors = await ShopCardColor.get(db, shop_id=shop_id)
+            db_colors: List[ShopCardColor] = await ShopCardColor.get_all(
+                db, shop_id=shop_id
+            )
             db_colors = [] if db_colors is None else db_colors
 
-            db_colors = [self.hex_to_rgb(color) for color in db_colors]
-            for cur_color in db_colors:
+            db_colors_rgb: List[ColorRGB] = [
+                self.hex_to_rgb(color.color) for color in db_colors
+            ]
+            for cur_color in db_colors_rgb:
                 max_cur_shop_color_sim = max(
                     max_cur_shop_color_sim,
-                    self.count_color_sim(self.hex_to_rgb(card_color), cur_color),
+                    self.count_color_sim(card_color, cur_color),
                 )
 
             cur_sim = (
@@ -64,10 +91,12 @@ class ShopSimilarityManager:
                 best_id = shop_id
         return best_id
 
-    def count_text_sim(self, text1: str, text2: str) -> float:
+    @staticmethod
+    def count_text_sim(text1: str, text2: str) -> float:
         return compare(text1, text2)
 
-    def count_color_sim(self, color1: ColorRGB, color2: ColorRGB) -> float:
+    @staticmethod
+    def count_color_sim(color1: ColorRGB, color2: ColorRGB) -> float:
         diff = sqrt(
             (color1.r - color2.r) ** 2
             + (color1.g - color2.g) ** 2
@@ -76,7 +105,8 @@ class ShopSimilarityManager:
         max_diff = 255**2 * 3
         return (max_diff - diff) / max_diff
 
-    def hex_to_rgb(self, hex: str) -> ColorRGB:
+    @staticmethod
+    def hex_to_rgb(hex: str) -> ColorRGB:
         rgb = ColorRGB()
         rgb.r = int(hex[0:2], 16)
         rgb.g = int(hex[2:4], 16)

@@ -3,11 +3,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from quick_wallet.database.connection import get_session
+from quick_wallet.schemas.base import BaseResponse
 from quick_wallet.schemas.wallets import CardWalletRequest
 from quick_wallet.services.misc import JWTManager
-from quick_wallet.services.wallets import WalletManager, WalletActionResult
-from quick_wallet.schemas.base import BaseResponse
-
+from quick_wallet.services.wallets import WalletActionResult, WalletManager
 
 api_router = APIRouter(prefix="/wallets")
 
@@ -47,5 +46,7 @@ async def delete_card_from_wallet(
     if user_id is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
-    res: WalletActionResult = await WalletManager.delete_card(db, user_id, request.wallet_id, request.card_id)
+    res: WalletActionResult = await WalletManager.delete_card(
+        db, user_id, request.wallet_id, request.card_id
+    )
     return res.value

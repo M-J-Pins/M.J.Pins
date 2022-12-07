@@ -12,10 +12,12 @@ from .shops.delete_shop import api_router as delete_shop_router
 from .shops.get_categories import api_router as get_categories_router
 from .shops.get_most_similar_shop import api_router as get_most_similar_shop_router
 from .shops.get_shops import api_router as get_shops_router
-from .wallets.create_wallet import api_router as create_wallet_router
 from .wallets.add_card_to_wallet import api_router as add_card_to_wallet_router
+from .wallets.create_wallet import api_router as create_wallet_router
+from .wallets.delete_card_from_wallet import (
+    api_router as delete_card_from_wallet_router,
+)
 from .wallets.delete_wallet import api_router as delete_wallet_router
-from .wallets.delete_card_from_wallet import api_router as delete_card_from_wallet_router
 from .wallets.give_access_to_wallet import api_router as give_access_to_wallet_router
 from .wallets.my_wallets import api_router as my_wallets_router
 from .wallets.revoke_access import api_router as revoke_access_router

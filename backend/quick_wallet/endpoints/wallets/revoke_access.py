@@ -6,11 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from quick_wallet.database.connection import get_session
-from quick_wallet.schemas.wallets import AccessToWalletRequest
-from quick_wallet.services.misc import JWTManager, ConvertManager
-from quick_wallet.services.wallets import WalletManager, WalletActionResult
 from quick_wallet.schemas.base import BaseResponse
-
+from quick_wallet.schemas.wallets import AccessToWalletRequest
+from quick_wallet.services.misc import ConvertManager, JWTManager
+from quick_wallet.services.wallets import WalletActionResult, WalletManager
 
 api_router = APIRouter(prefix="/wallets/access")
 
@@ -50,7 +49,10 @@ async def revoke_access_to_wallet(
     if user_id is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
-    user_to_give_access_id: UUID = await ConvertManager.phone2user_id(db, request.user_to_change_access_phone)
-    res: WalletActionResult = await WalletManager.revoke_access(db, user_id, request.wallet_id, user_to_give_access_id)
+    user_to_give_access_id: UUID = await ConvertManager.phone2user_id(
+        db, request.user_to_change_access_phone
+    )
+    res: WalletActionResult = await WalletManager.revoke_access(
+        db, user_id, request.wallet_id, user_to_give_access_id
+    )
     return res.value
-

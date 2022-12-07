@@ -89,7 +89,10 @@ class WalletManager:
         if await WalletCard.get(db, card_id=card_id, wallet_id=wallet_id) is None:
             return WalletActionResult.NO_CARD
 
-        if await WalletCard.get(db, card_id=card_id, card_owner_id=card_owner_id) is None:
+        if (
+            await WalletCard.get(db, card_id=card_id, card_owner_id=card_owner_id)
+            is None
+        ):
             return WalletActionResult.NO_ACCESS
         await WalletCard.delete(db, wallet_id=wallet_id, card_id=card_id)
 
@@ -112,7 +115,9 @@ class WalletManager:
         return WalletActionResult.SUCCESS
 
     @staticmethod
-    async def leave_wallet(db: AsyncSession, user_id: UUID, wallet_id: UUID) -> WalletActionResult:
+    async def leave_wallet(
+        db: AsyncSession, user_id: UUID, wallet_id: UUID
+    ) -> WalletActionResult:
         db_wallet: Wallet = await Wallet.get(db, id=wallet_id)
         if db_wallet is None:
             return WalletActionResult.NO_WALLET
@@ -128,7 +133,9 @@ class WalletManager:
         return WalletActionResult.SUCCESS
 
     @staticmethod
-    async def delete_wallet(db: AsyncSession, wallet_owner_id: UUID, wallet_id: UUID) -> WalletActionResult:
+    async def delete_wallet(
+        db: AsyncSession, wallet_owner_id: UUID, wallet_id: UUID
+    ) -> WalletActionResult:
         db_wallet: Wallet = await Wallet.get(db, id=wallet_id)
         if db_wallet is None:
             return WalletActionResult.NO_WALLET

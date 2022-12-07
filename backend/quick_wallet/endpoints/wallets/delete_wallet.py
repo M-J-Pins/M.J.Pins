@@ -7,11 +7,10 @@ from starlette import status
 
 from quick_wallet.database.connection import get_session
 from quick_wallet.database.models.storage import Wallet
+from quick_wallet.schemas.base import BaseResponse
 from quick_wallet.schemas.wallets import WalletId
 from quick_wallet.services.misc import JWTManager
-from quick_wallet.services.wallets import WalletManager, WalletActionResult
-from quick_wallet.schemas.base import BaseResponse
-
+from quick_wallet.services.wallets import WalletActionResult, WalletManager
 
 api_router = APIRouter(prefix="/wallets")
 
@@ -53,8 +52,11 @@ async def delete_wallet(
 
     wallet: Wallet = await Wallet.get(db, id=request.wallet_id, owner_id=user_id)
     if wallet is None:
-        res: WalletActionResult = await WalletManager.leave_wallet(db, user_id, request.wallet_id)
+        res: WalletActionResult = await WalletManager.leave_wallet(
+            db, user_id, request.wallet_id
+        )
     else:
-        res: WalletActionResult = await WalletManager.delete_wallet(db, user_id, request.wallet_id)
+        res: WalletActionResult = await WalletManager.delete_wallet(
+            db, user_id, request.wallet_id
+        )
     return res.value
-

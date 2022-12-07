@@ -3,10 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from quick_wallet.database.connection import get_session
-from quick_wallet.schemas.wallets import WalletListResponse
-from quick_wallet.services.misc import JWTManager, ConvertManager
 from quick_wallet.schemas.base import AuthorizedRequest
-
+from quick_wallet.schemas.wallets import WalletListResponse
+from quick_wallet.services.misc import ConvertManager, JWTManager
 
 api_router = APIRouter(prefix="/wallets")
 

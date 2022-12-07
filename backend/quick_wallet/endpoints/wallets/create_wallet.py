@@ -7,9 +7,8 @@ from starlette import status
 
 from quick_wallet.database.connection import get_session
 from quick_wallet.schemas.wallets import CreateWalletRequest, WalletResponse
-from quick_wallet.services.misc import JWTManager, ConvertManager
-from quick_wallet.services.wallets import WalletManager, WalletActionResult
-
+from quick_wallet.services.misc import ConvertManager, JWTManager
+from quick_wallet.services.wallets import WalletActionResult, WalletManager
 
 api_router = APIRouter(prefix="/wallets")
 
@@ -42,8 +41,8 @@ async def create_wallet(
             ],
             "users": [
                 "+79507990996",
-            ]
-        }
+            ],
+        },
     ),
     db: AsyncSession = Depends(get_session),
 ):
@@ -63,7 +62,9 @@ async def create_wallet(
         if id is not None:
             user_ids.append(id)
 
-    res, wallet = await WalletManager.create_wallet(db, user_id, request.name, request.cards, user_ids)
+    res, wallet = await WalletManager.create_wallet(
+        db, user_id, request.name, request.cards, user_ids
+    )
     if res != WalletActionResult.SUCCESS:
         raise HTTPException(status_code=res.value)
 
