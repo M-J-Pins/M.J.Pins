@@ -11,7 +11,8 @@ from quick_wallet.database.models import Shop
 from quick_wallet.schemas.base import AuthorizedRequest
 from quick_wallet.schemas.misc import SimilarityRequest
 from quick_wallet.schemas.shops import ShopResponse
-from quick_wallet.services.misc import AssetManager, JWTManager, ShopSimilarityManager
+from quick_wallet.services.misc import AssetManager, JWTManager
+from quick_wallet.services.shop_simillarity import ShopSimilarityManager
 
 api_router = APIRouter(prefix="/shops")
 
