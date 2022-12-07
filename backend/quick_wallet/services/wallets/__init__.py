@@ -1,5 +1,4 @@
-from .wallet_manager import WalletManager, WalletActionResult
-
+from .wallet_manager import WalletActionResult, WalletManager
 
 __all__ = [
     "WalletManager",

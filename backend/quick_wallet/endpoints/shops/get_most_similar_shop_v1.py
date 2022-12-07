@@ -1,23 +1,24 @@
 from typing import List
 from uuid import UUID
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from PIL import Image
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from quick_wallet.config.settings import get_settings
 from quick_wallet.database.connection import get_session
 from quick_wallet.database.models import Shop
+from quick_wallet.schemas.base import AuthorizedRequest
 from quick_wallet.schemas.misc import SimilarityRequest
 from quick_wallet.schemas.shops import ShopResponse
-from quick_wallet.services.misc import JWTManager, ShopSimilarityManager
-
+from quick_wallet.services.misc import AssetManager, JWTManager
+from quick_wallet.services.shop_simillarity import ShopSimilarityManager
 
 api_router = APIRouter(prefix="/shops")
 
 
-@api_router.get(
-    "/similarity/most",
+@api_router.post(
+    "/similarity/most/v1",
     response_model=ShopResponse,
     status_code=status.HTTP_200_OK,
     responses={
@@ -28,15 +29,16 @@ api_router = APIRouter(prefix="/shops")
             "description": "Invalid or unknown admin token",
         },
         status.HTTP_404_NOT_FOUND: {
-            "description": "Shop with such shop_id wasn't found",
+            "description": "Similar shop wasn't found",
         },
         status.HTTP_500_INTERNAL_SERVER_ERROR: {
             "description": "Oops.. Server was broken by your request",
         },
     },
 )
-async def get_most_similar_shop(
-    request: SimilarityRequest = Depends(),
+async def get_most_similar_shop_v1(
+    request: AuthorizedRequest = Depends(),
+    card_photo: UploadFile = File(...),
     db: AsyncSession = Depends(get_session),
 ):
     """
@@ -47,15 +49,20 @@ async def get_most_similar_shop(
     if user_id is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
+    image_name = AssetManager.save_image(card_photo.file.read(), gray_duplicate=True)
+    image_gray: Image = AssetManager.get_gray_pil_img(image_name)
+    card_text = ShopSimilarityManager.get_text_from_image(image_gray)
+    card_color = ShopSimilarityManager.count_image_color(card_photo.file)
+
     db_shops: List[Shop] = await Shop.get_all(db)
     db_shops = [] if db_shops is None else db_shops
     shop_ids = [shop.id for shop in db_shops]
     most_similar_shop_id: UUID = await ShopSimilarityManager(
         1, 1
-    ).find_the_most_suitable_shop(db, shop_ids, request.card_text, request.card_color)
+    ).find_the_most_similar_shop_v1(db, shop_ids, card_text, card_color)
     if most_similar_shop_id is None:
-        most_similar_shop: Shop = await Shop.get(db)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     else:
-        most_similar_shop: Shop = await Shop.get(db, shop_id=most_similar_shop_id)
+        most_similar_shop: Shop = await Shop.get(db, id=most_similar_shop_id)
 
     return ShopResponse.from_orm(most_similar_shop)

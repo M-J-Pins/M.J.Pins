@@ -5,8 +5,8 @@ from uuid import UUID
 from pydantic import BaseModel, constr, validator
 from pydantic.fields import Field, List
 
-from quick_wallet.schemas.cards import CardResponse
 from quick_wallet.schemas.base import AuthorizedRequest
+from quick_wallet.schemas.cards import CardResponse
 
 
 class WalletId(AuthorizedRequest):
