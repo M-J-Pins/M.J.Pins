@@ -4,7 +4,7 @@ from starlette import status
 
 from quick_wallet.config.settings import get_settings
 from quick_wallet.database.connection import get_session
-from quick_wallet.database.models import Shop, CardSimilarityData
+from quick_wallet.database.models import CardSimilarityData, Shop
 from quick_wallet.schemas.base import BaseResponse
 from quick_wallet.schemas.misc import AddSimilarityRequest
 
@@ -54,6 +54,8 @@ async def add_similarity_data(
     if await Shop.get(db, id=request.shop_id) is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    await CardSimilarityData.create(db, shop_id=request.shop_id, text=request.card_text, color=request.card_color)
+    await CardSimilarityData.create(
+        db, shop_id=request.shop_id, text=request.card_text, color=request.card_color
+    )
 
     return {"description": "Data was added successfully!"}

@@ -10,7 +10,9 @@ from .shops.add_shop import api_router as add_shop_router
 from .shops.add_similarity_data import api_router as add_similarity_data_router
 from .shops.delete_shop import api_router as delete_shop_router
 from .shops.get_categories import api_router as get_categories_router
-from .shops.get_most_similar_shop_v1 import api_router as get_most_similar_shop_router_v1
+from .shops.get_most_similar_shop_v1 import (
+    api_router as get_most_similar_shop_router_v1,
+)
 from .shops.get_shops import api_router as get_shops_router
 from .wallets.add_card_to_wallet import api_router as add_card_to_wallet_router
 from .wallets.create_wallet import api_router as create_wallet_router

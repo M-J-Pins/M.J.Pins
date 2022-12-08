@@ -54,7 +54,9 @@ async def add_standard_card(
     )
 
     if request.add_card_action_id is not None:
-        add_card_action: AddCardAction = await AddCardAction.get(db, id=request.add_card_action_id)
+        add_card_action: AddCardAction = await AddCardAction.get(
+            db, id=request.add_card_action_id
+        )
         if add_card_action is not None:
             shop: Shop = await Shop.get(db, id=request.shop_id)
             if shop is not None:
