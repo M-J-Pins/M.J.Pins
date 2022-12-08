@@ -7,10 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from quick_wallet.database.connection import get_session
-from quick_wallet.database.models import Shop
+from quick_wallet.database.models.storage import Shop
+from quick_wallet.database.models.analysis import AddCardAction
 from quick_wallet.schemas.base import AuthorizedRequest
-from quick_wallet.schemas.misc import SimilarityRequest
-from quick_wallet.schemas.shops import ShopResponse
+from quick_wallet.schemas.shops import MostSimilarShopResponse, ShopResponse
 from quick_wallet.services.misc import AssetManager, JWTManager
 from quick_wallet.services.shop_simillarity import ShopSimilarityManager
 
@@ -65,4 +65,11 @@ async def get_most_similar_shop_v1(
     else:
         most_similar_shop: Shop = await Shop.get(db, id=most_similar_shop_id)
 
-    return ShopResponse.from_orm(most_similar_shop)
+    add_card_action: AddCardAction = await AddCardAction.create(
+        db,
+        image_name=image_name,
+        program_predict_shop_id=most_similar_shop.id,
+        program_predict_shop_name=most_similar_shop.name,
+    )
+
+    return MostSimilarShopResponse(**ShopResponse.from_orm(most_similar_shop).__dict__, add_card_action_id=add_card_action.id)

@@ -9,7 +9,7 @@ from PIL import Image
 from pysimilar import compare
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from quick_wallet.database.models.analysis import ShopCardColor, ShopCardText
+from quick_wallet.database.models.analysis import CardSimilarityData
 from quick_wallet.schemas.misc import ColorRGB
 
 
@@ -35,12 +35,12 @@ class ShopSimilarityManager:
         )
 
     async def find_the_most_similar_shop_v1(
-        self,
-        db: AsyncSession,
-        shop_ids: list[UUID],
-        card_text: str,
-        card_color: ColorRGB,
-        minimal_similarity: int = 0,
+            self,
+            db: AsyncSession,
+            shop_ids: list[UUID],
+            card_text: str,
+            card_color: ColorRGB,
+            minimal_similarity: int = 0,
     ) -> UUID:
         """
         This algorithm will analyse the text extracted from the photo and avg color to choose the most similar shop
@@ -55,41 +55,27 @@ class ShopSimilarityManager:
         best_id = None
         max_sim = 0
         for shop_id in shop_ids:
-            max_cur_shop_text_sim = 0
-            max_cur_shop_color_sim = 0
-
-            db_texts: List[ShopCardText] = await ShopCardText.get_all(
-                db, shop_id=shop_id
-            )
-            db_texts = [] if db_texts is None else db_texts
-            for cur_text in db_texts:
-                print(f"!!!!! {cur_text} !!!\n\n")
-                max_cur_shop_text_sim = max(
-                    max_cur_shop_text_sim, self.count_text_sim(card_text, cur_text.text)
-                )
-
-            db_colors: List[ShopCardColor] = await ShopCardColor.get_all(
-                db, shop_id=shop_id
-            )
-            db_colors = [] if db_colors is None else db_colors
-
-            db_colors_rgb: List[ColorRGB] = [
-                self.hex_to_rgb(color.color) for color in db_colors
-            ]
-            for cur_color in db_colors_rgb:
-                max_cur_shop_color_sim = max(
-                    max_cur_shop_color_sim,
-                    self.count_color_sim(card_color, cur_color),
-                )
-
-            cur_sim = (
-                self.text_sim_rate * max_cur_shop_text_sim
-                + self.color_sim_rate * max_cur_shop_color_sim
-            )
+            cur_sim = await self.count_sim_by_shop_id(db, shop_id, card_text, card_color)
             if cur_sim > max_sim and cur_sim > minimal_similarity:
                 max_sim = cur_sim
                 best_id = shop_id
         return best_id
+
+    async def count_sim_by_shop_id(self, db: AsyncSession, shop_id: UUID, card_text: str, card_color: ColorRGB) -> float:
+        card_sim_data_list: List[CardSimilarityData] = await CardSimilarityData.get_all(db, shop_id=shop_id)
+        card_sim_data_list = [] if card_sim_data_list is None else card_sim_data_list
+        similarity = 0
+        for card_sim_data in card_sim_data_list:
+            similarity = max(similarity, self.count_card_data_sim(card_sim_data, card_text, card_color))
+        return similarity
+
+    def count_card_data_sim(self, card_sim_data: CardSimilarityData, card_text: str, card_color: ColorRGB) -> float:
+        text_sim = self.count_text_sim(card_text, card_sim_data.text)
+        color_sim = self.count_color_sim(card_color, self.hex_to_rgb(card_sim_data.color))
+        return (
+                self.text_sim_rate * text_sim
+                + self.color_sim_rate * color_sim
+        )
 
     @staticmethod
     def count_text_sim(text1: str, text2: str) -> float:
@@ -102,7 +88,7 @@ class ShopSimilarityManager:
             + (color1.g - color2.g) ** 2
             + (color1.b - color1.b) ** 2
         )
-        max_diff = 255**2 * 3
+        max_diff = 255 ** 2 * 3
         return (max_diff - diff) / max_diff
 
     @staticmethod
