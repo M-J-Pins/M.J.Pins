@@ -1,12 +1,14 @@
 package com.example.quickwallet.presentation.viewmodel
 
 import ImageProxyUtils
+import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quickwallet.presentation.BaseApplication
@@ -49,7 +51,7 @@ constructor(
                     }
 
                     override fun onError(exception: ImageCaptureException) {
-                        Log.d(Constants.photoViewModel,"ERROR TAKE PHOTO")
+                        exception.localizedMessage?.let { Log.d(Constants.photoViewModel, it) }
                     }
                 }
             )

@@ -1,5 +1,6 @@
 package com.example.quickwallet.presentation.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -47,6 +48,7 @@ class CardViewModel
             location.addOnSuccessListener {
                 it?.let {
                     async{cardRepository.getQuickCards(token,it.latitude, it.latitude)?.let {
+                        Log.d("AAAAAAAAAAAAAAAAAA","!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                         quickCards.value = it
                     }}
                 }

@@ -138,10 +138,10 @@ class MainActivity : ComponentActivity() {
                 NavHost(
                     modifier = Modifier.padding(scaffoldPadding), navController = navController,
                     startDestination =
-//                    if (activityViewModel.isFirstExecution.value)
-//                        Screen.AuthScreens.AuthStart.route
-//                    else Screen.QuickWallet.QuickCards.route
-                    Screen.QuickWallet.ScanCardFrontSurfaceScreen.route
+                    if (activityViewModel.isFirstExecution.value)
+                        Screen.AuthScreens.AuthStart.route
+                    else Screen.QuickWallet.QuickCards.route
+//                    Screen.QuickWallet.QuickCards.route
 
                 ) {
                     composable(Screen.AuthScreens.AuthStart.route) {

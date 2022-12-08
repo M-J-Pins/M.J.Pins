@@ -207,7 +207,24 @@ fun PhotoButton(
             .padding(bottom = 20.dp),
         onClick = {
             Log.d(Constants.cameraPreviewLogTag, "take photo btn was clicked")
-            takePhoto(imageCapture, executorService, token, action)
+            imageCapture.takePicture(
+                executorService,
+                object : ImageCapture.OnImageCapturedCallback() {
+                    override fun onCaptureSuccess(image: ImageProxy) {
+                        val data = ImageProxyUtils.getByteArray(image)
+                        data?.let {
+                            Log.d(Constants.photoViewModel, "sending data")
+                            action(token,data)
+                        }
+                        image.close()
+                    }
+
+                    override fun onError(exception: ImageCaptureException) {
+                        exception.localizedMessage?.let { Log.d(Constants.photoViewModel, it) }
+                    }
+                }
+            )
+//            takePhoto(imageCapture, executorService, token, action)
 //            navController.navigate(Scre)
         },
         content = {

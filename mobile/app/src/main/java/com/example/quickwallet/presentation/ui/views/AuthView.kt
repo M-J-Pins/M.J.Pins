@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIos
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -210,28 +211,66 @@ fun SendCodeView(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                LaunchedEffect(key1 = viewModel.opt0.value){
+                    if (viewModel.opt0.value.isNotEmpty()) {
+                        focusManager.moveFocus(
+                            focusDirection = FocusDirection.Next,
+                        )
+                    }
+                }
+                LaunchedEffect(key1 = viewModel.opt1.value){
+                    if (viewModel.opt1.value.isNotEmpty()) {
+                        focusManager.moveFocus(
+                            focusDirection = FocusDirection.Next,
+                        )
+                    }
+                }
+                LaunchedEffect(key1 = viewModel.opt2.value){
+                    if (viewModel.opt2.value.isNotEmpty()) {
+                        focusManager.moveFocus(
+                            focusDirection = FocusDirection.Next,
+                        )
+                    }
+                }
+
                 CommonOtpTextField(
                     otp = viewModel.opt0.value,
                     index = 0,
                     onOptChange = viewModel::onCodeCellChange,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.NumberPassword,
+                        imeAction = ImeAction.Next,
+                    ),
                     isCodeError = viewModel.isWrongCode.value,
                 )
                 CommonOtpTextField(
                     otp = viewModel.opt1.value,
                     index = 1,
                     onOptChange = viewModel::onCodeCellChange,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.NumberPassword,
+                        imeAction = ImeAction.Next,
+                    ),
                     isCodeError = viewModel.isWrongCode.value,
                 )
                 CommonOtpTextField(
                     otp = viewModel.opt2.value,
                     index = 2,
                     onOptChange = viewModel::onCodeCellChange,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.NumberPassword,
+                        imeAction = ImeAction.Next,
+                    ),
                     isCodeError = viewModel.isWrongCode.value,
                 )
                 CommonOtpTextField(
                     otp = viewModel.opt3.value,
                     index = 3,
                     onOptChange = viewModel::onCodeCellChange,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.NumberPassword,
+                        imeAction = ImeAction.Done,
+                    ),
                     isCodeError = viewModel.isWrongCode.value,
                 )
             }
@@ -309,6 +348,7 @@ fun CommonOtpTextField(
     otp: String,
     index: Int,
     onOptChange: (cell: String, index: Int) -> Unit,
+    keyboardOptions: KeyboardOptions,
     isCodeError: Boolean
 ) {
     OutlinedTextField(
@@ -317,10 +357,7 @@ fun CommonOtpTextField(
         onValueChange = {
             onOptChange(it, index)
         },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Phone,
-            imeAction = ImeAction.Next
-        ),
+        keyboardOptions =keyboardOptions,
         shape = RoundedCornerShape(4.dp),
         modifier = Modifier
             .requiredSize(60.dp),
