@@ -1,5 +1,6 @@
 package com.example.quickwallet.presentation
 
+import android.Manifest
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -21,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -30,13 +32,11 @@ import androidx.navigation.compose.rememberNavController
 import com.example.quickwallet.R
 import com.example.quickwallet.presentation.navigation.Screen
 import com.example.quickwallet.presentation.navigation.bottomNavigationScreens
-import com.example.quickwallet.presentation.ui.views.FastCardView
-import com.example.quickwallet.presentation.ui.views.MyCardsView
-import com.example.quickwallet.presentation.ui.views.SendCodeView
-import com.example.quickwallet.presentation.ui.views.SendPhoneNumberView
-import com.example.quickwallet.presentation.viewmodel.ActivityViewModel
-import com.example.quickwallet.presentation.viewmodel.AuthViewModel
-import com.example.quickwallet.presentation.viewmodel.CardViewModel
+import com.example.quickwallet.presentation.ui.views.*
+import com.example.quickwallet.presentation.viewmodel.*
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -46,7 +46,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val activityViewModel by viewModels<ActivityViewModel>()
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -139,11 +139,14 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.padding(scaffoldPadding), navController = navController,
                     startDestination =
 //                    if (activityViewModel.isFirstExecution.value)
-//                        Screen.AuthScreens.AuthPhoneRequest.route
+//                        Screen.AuthScreens.AuthStart.route
 //                    else Screen.QuickWallet.QuickCards.route
-                Screen.QuickWallet.MyCards.route
+                    Screen.QuickWallet.AddCard.route
 
                 ) {
+                    composable(Screen.AuthScreens.AuthStart.route) {
+                        StartAuthScreen(navController = navController)
+                    }
                     composable(Screen.AuthScreens.AuthPhoneRequest.route) {
                         SendPhoneNumberView(
                             viewModel = authViewModel,
@@ -152,17 +155,33 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(Screen.AuthScreens.AuthRequest.route) {
                         SendCodeView(
-                            viewModel = authViewModel, navController = navController
+                            viewModel = authViewModel,
+                            activityViewModel = activityViewModel,
+                            navController = navController
                         )
                     }
                     composable(Screen.QuickWallet.QuickCards.route) {
-                        FastCardView(
-                            viewModel = cardViewModel, navController = navController
-                        )
+                        LaunchedEffect(Unit) {
+                            cardViewModel.getQuickCards(activityViewModel.accessToken.value)
+                        }
+                        QuickCardsView(cardViewModel, activityViewModel.accessToken.value)
                     }
                     composable(Screen.QuickWallet.MyCards.route) {
-                        MyCardsView()
+                        MyCardsView(
+                            activityViewModel.accessToken.value,
+                            navController,
+                            cardViewModel
+                        )
                     }
+                    composable(Screen.QuickWallet.AddCard.route) {
+                        val viewModel = hiltViewModel<PhotoViewModel>()
+                        CameraView(
+                            navController = navController,
+                            mode = PhotoViewMode.SCANNING,
+                            viewModel = viewModel
+                        )
+                    }
+
                 }
             }
         }

@@ -3,6 +3,7 @@ package com.example.quickwallet.network.services.card.impl
 import android.util.Log
 import com.example.quickwallet.domain.model.Card
 import com.example.quickwallet.network.api.CardApi
+import com.example.quickwallet.network.request.card.QuickCardsRequest
 import com.example.quickwallet.network.request.card.StandardCardRequest
 import com.example.quickwallet.network.request.card.UnknownCardRequest
 import com.example.quickwallet.network.response.CardResponse
@@ -58,22 +59,15 @@ class CardServiceImpl(
     }
 
     override suspend fun getAllCards(token: String): List<Card>? {
-        var cardList: List<Card>? = null
-        retrofit.getAllCards(token).enqueue(
-            object : Callback<List<CardResponse>> {
-                override fun onResponse(
-                    call: Call<List<CardResponse>>,
-                    response: Response<List<CardResponse>>
-                ) {
-                    cardList = response.body()?.map { it.toCard() }
-                    Log.d(Constants.cardServiceLogTag, "getAllCards() successful")
-                }
-                override fun onFailure(call: Call<List<CardResponse>>, t: Throwable) {
-                    cardList = null
-                    Log.d(Constants.cardServiceLogTag, "getAllCards() error")
-                }
-            }
-        )
-        return cardList
+        return retrofit.getAllCards(token).execute().body()?.map{
+            it.toCard()
+        }
+    }
+
+    override suspend fun getQuickCards(quickCardsRequest: QuickCardsRequest): MutableList<Card>? {
+        Log.d(Constants.cardServiceLogTag, CardServiceImpl::getQuickCards.name)
+        return retrofit.getQuickCards(quickCardsRequest).execute().body()?.map {
+            it.toCard()
+        }?.toMutableList()
     }
 }

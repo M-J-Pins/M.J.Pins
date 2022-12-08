@@ -31,9 +31,11 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.helper.widget.Flow
+import androidx.navigation.NavController
 import com.example.compose.AppTheme
 import com.example.quickwallet.R
 import com.example.quickwallet.domain.model.cards
+import com.example.quickwallet.presentation.viewmodel.CardViewModel
 import com.example.quickwallet.utils.glide.DEFAULT_RECIPE_IMAGE
 import com.example.quickwallet.utils.glide.loadPicture
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -41,8 +43,11 @@ import com.google.accompanist.pager.VerticalPager
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class, ExperimentalPagerApi::class)
 @Composable
-@Preview
-fun MyCardsView() {
+fun MyCardsView(
+    token: String,
+    navController: NavController,
+    cardViewModel: CardViewModel
+) {
     AppTheme {
         Column(
             modifier = Modifier
@@ -53,8 +58,8 @@ fun MyCardsView() {
             Spacer(modifier = Modifier.height(8.dp))
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = "",
-                onValueChange = {},
+                value = cardViewModel.searchText.value,
+                onValueChange = { cardViewModel.onSearchTextChanged(it) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search, "",
@@ -146,13 +151,12 @@ fun MyCardsView() {
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
-
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(cards.size){
+                items(cards.size) {
                     Card(
                         modifier = Modifier
                             .requiredWidth(316.dp)
@@ -166,7 +170,6 @@ fun MyCardsView() {
                     }
                 }
             }
-
         }
 
     }

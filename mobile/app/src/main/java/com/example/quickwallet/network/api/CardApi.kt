@@ -1,5 +1,8 @@
 package com.example.quickwallet.network.api
 
+import androidx.navigation.Navigator
+import com.example.quickwallet.domain.model.Card
+import com.example.quickwallet.network.request.card.QuickCardsRequest
 import com.example.quickwallet.network.request.card.StandardCardRequest
 import com.example.quickwallet.network.request.card.UnknownCardRequest
 import com.example.quickwallet.network.response.CardResponse
@@ -15,5 +18,6 @@ interface CardApi {
     fun addUnknownCard(@Named("token") token: String, unknownCardRequest: UnknownCardRequest): Call<CardResponse>
     @GET("cards/my")
     fun getAllCards(@Named("token") token: String): Call<List<CardResponse>>
-
+    @GET("cards/quick")
+    fun getQuickCards(quickCardsRequest: QuickCardsRequest): Call<MutableList<CardResponse>>
 }

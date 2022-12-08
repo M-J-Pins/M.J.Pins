@@ -59,6 +59,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.4.1")
     implementation(files("C:\\Users\\Maxim\\Documents\\accompanist-systemuicontroller-0.28.0.aar"))
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 
     debugImplementation("androidx.compose.ui:ui-tooling:1.3.0")
     implementation("androidx.compose.ui:ui-tooling-preview:1.3.0")

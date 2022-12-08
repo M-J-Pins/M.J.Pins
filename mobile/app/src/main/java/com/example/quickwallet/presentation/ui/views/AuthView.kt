@@ -19,19 +19,25 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.compose.AppTheme
 import com.example.quickwallet.R
+import com.example.quickwallet.presentation.navigation.Screen
+import com.example.quickwallet.presentation.ui.theme.fontBold
+import com.example.quickwallet.presentation.viewmodel.ActivityViewModel
 import com.example.quickwallet.presentation.viewmodel.AuthViewModel
 import com.example.quickwallet.utils.PhoneNumberVisualTransformation
 
@@ -128,7 +134,7 @@ fun SendPhoneNumberView(
                         focusManager.moveFocus(FocusDirection.Up)
                     } else {
                         viewModel.sendPhoneNumber()
-                        navController.navigate("send-code")
+                        navController.navigate(Screen.AuthScreens.AuthRequest.route)
                     }
                 },
             ) {
@@ -146,6 +152,7 @@ fun SendPhoneNumberView(
 @Composable
 fun SendCodeView(
     viewModel: AuthViewModel,
+    activityViewModel: ActivityViewModel,
     navController: NavController
 ) {
     AppTheme {
@@ -244,7 +251,10 @@ fun SendCodeView(
 
             checkFilledCells(
                 areFilled = viewModel.isAllCodeCellsFilled.value,
-                onSuccess = viewModel::sendPhoneAuth
+                onSuccess = {
+                    viewModel.sendPhoneAuth()
+                    activityViewModel.fetchToken()
+                }
             )
 
             checkCodeResult(
@@ -280,6 +290,7 @@ fun checkFilledCells(
 ) {
     if (areFilled) {
         onSuccess()
+
     }
 }
 
@@ -290,7 +301,7 @@ fun checkCodeResult(
     navController: NavController
 ) {
     if (!isCodeError && responseReceived) {
-        navController.navigate("my-cards")
+        navController.navigate(Screen.QuickWallet.QuickCards.route)
     }
 }
 
@@ -327,3 +338,71 @@ fun CommonOtpTextField(
     )
 }
 
+@Composable
+fun StartAuthScreen(
+    navController: NavController
+) {
+    val focusManager = LocalFocusManager.current
+    Image(
+        modifier = Modifier
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = { focusManager.clearFocus(true) }
+            )
+            .fillMaxSize(),
+        painter = painterResource(R.drawable.gradient),
+        contentDescription = "background_image",
+        contentScale = ContentScale.FillBounds
+    )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp, 40.dp),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(
+            modifier = Modifier
+                .offset(y = 50.dp)
+                .wrapContentSize()
+        ) {
+            Text(
+                text = "Quick wallet",
+                textAlign = TextAlign.Left,
+                style = MaterialTheme.typography.displayLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "быстрый поиск скидочных карт",
+                color = MaterialTheme.colorScheme.onBackground,
+                fontFamily = com.example.quickwallet.presentation.ui.theme.font.toFontFamily(),
+                fontSize = 22.sp,
+                fontWeight = FontWeight.W400,
+            )
+        }
+
+        OutlinedButton(
+            modifier = Modifier
+                .offset(y = (-28).dp)
+                .fillMaxWidth()
+                .height(64.dp)
+                .border(
+                    width = 2.dp,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    shape = RoundedCornerShape(36.dp)
+                ),
+            onClick = {
+                navController.navigate(Screen.AuthScreens.AuthPhoneRequest.route)
+            }
+        ) {
+            Text(
+                text = "Авторизация",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
+    }
+
+}

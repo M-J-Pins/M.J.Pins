@@ -30,6 +30,8 @@ private val app: BaseApplication
                     override fun onCaptureSuccess(image: ImageProxy) {
                         val img = image.image
 
+
+
                         image.close()
                     }
 

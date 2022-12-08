@@ -13,7 +13,8 @@ class PhoneNumberVisualTransformation(
     countryCode: String = Locale.getDefault().country
 ) : VisualTransformation {
 
-    private val phoneNumberFormatter = PhoneNumberUtil.getInstance().getAsYouTypeFormatter(countryCode)
+    private val phoneNumberFormatter =
+        PhoneNumberUtil.getInstance().getAsYouTypeFormatter(countryCode)
 
     override fun filter(text: AnnotatedString): TransformedText {
         val transformation = reformat(text, Selection.getSelectionEnd(text))
@@ -21,10 +22,23 @@ class PhoneNumberVisualTransformation(
         return TransformedText(AnnotatedString(transformation.formatted ?: ""), object :
             OffsetMapping {
             override fun originalToTransformed(offset: Int): Int {
-                return transformation.originalToTransformed[offset]
+                var value = 0
+                try {
+                    value = transformation.originalToTransformed[offset]
+                } catch (_: Exception) {
+
+                }
+                return value
             }
+
             override fun transformedToOriginal(offset: Int): Int {
-                return transformation.transformedToOriginal[offset]
+                var value = 0
+                try {
+                    value = transformation.transformedToOriginal[offset]
+                } catch (_ :Exception) {
+
+                }
+                return value
             }
         })
     }
