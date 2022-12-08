@@ -1,4 +1,3 @@
-from .access_to_wallet import AccessToWalletRequest
 from .base import (
     WalletCardScheme,
     WalletId,
@@ -6,6 +5,7 @@ from .base import (
     WalletResponse,
     WalletShortInfo,
 )
+from .access_to_wallet import AccessToWalletRequest
 from .card_wallet import CardWalletRequest
 from .create_wallet import CreateWalletRequest
 

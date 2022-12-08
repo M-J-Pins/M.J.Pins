@@ -6,7 +6,7 @@ from starlette import status
 
 from quick_wallet.config import get_settings
 from quick_wallet.database.connection import get_session
-from quick_wallet.database.models import Card
+from quick_wallet.database.models import Card, CardTypeEnum
 from quick_wallet.schemas.cards import CardListResponse, CardResponse, QuickCardsRequest
 from quick_wallet.services.map_seacher import MapSearchManager, Point, PointParser
 from quick_wallet.services.misc import JWTManager
@@ -53,12 +53,20 @@ async def get_quick_cards(
     if user_id is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
-    db_cards: List[Card] = await Card.get_all(db, owner_id=user_id)
     position: Point = Point(request.longitude, request.latitude)
     card_dist_list: List[CardDist] = []
-    for card in db_cards:
+
+    db_standard_cards: List[Card] = await Card.get_all(db, owner_id=user_id, type=CardTypeEnum.STANDARD)
+    for card in db_standard_cards:
         cur_dist: float = MapSearchManager.distance_to_nearest_shop(
             position, card.map_search_string, get_settings().SEARCH_RADIUS
+        )
+        card_dist_list.append(CardDist(card, cur_dist))
+
+    db_unknown_cards: List[Card] = await Card.get_all(db, owner_id=user_id, type=CardTypeEnum.UNKNOWN)
+    for card in db_unknown_cards:
+        cur_dist: float = MapSearchManager.distance_to_nearest_shop(
+            position, card.shop_name, get_settings().SEARCH_RADIUS
         )
         card_dist_list.append(CardDist(card, cur_dist))
 

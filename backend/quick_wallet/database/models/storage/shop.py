@@ -17,6 +17,7 @@ class ShopCategoryEnum(enum.Enum):
     CAR = "Транспорт"
     BOOKS = "Книги"
     OFFICE = "Канцелярия"
+    HOME = "Для дома"
 
 
 class Shop(BaseTable):

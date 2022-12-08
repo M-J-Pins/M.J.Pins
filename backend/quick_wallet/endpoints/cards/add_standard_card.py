@@ -3,6 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from quick_wallet.database.connection import get_session
+from quick_wallet.database.models import Shop
+from quick_wallet.database.models.analysis import AddCardAction
 from quick_wallet.database.models.storage import CardTypeEnum
 from quick_wallet.schemas.cards import AddStandardCardRequest, CardResponse
 from quick_wallet.services.access import FunctionCallResult
@@ -50,6 +52,16 @@ async def add_standard_card(
         CardTypeEnum.STANDARD,
         shop_id=request.shop_id,
     )
+
+    if request.add_card_action_id is not None:
+        add_card_action: AddCardAction = await AddCardAction.get(db, id=request.add_card_action_id)
+        if add_card_action is not None:
+            shop: Shop = await Shop.get(db, id=request.shop_id)
+            if shop is not None:
+                add_card_action.user_choice_shop_name = shop.name
+                add_card_action.user_choice_shop_id = shop.id
+                await db.commit()
+
     if result == FunctionCallResult.SUCCESS:
         return CardResponse.from_orm(new_card)
     raise HTTPException(
