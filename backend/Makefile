@@ -26,4 +26,3 @@ migrate:  ##@Database Do all migrations in database
 
 deploy:
 	gunicorn -k uvicorn.workers.UvicornWorker -b "0.0.0.0:8000" quick_wallet.__main__:app
-
