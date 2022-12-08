@@ -42,6 +42,7 @@ import androidx.navigation.NavController
 import com.example.compose.AppTheme
 import com.example.quickwallet.presentation.viewmodel.PhotoViewMode
 import com.example.quickwallet.presentation.viewmodel.PhotoViewModel
+import com.example.quickwallet.presentation.viewmodel.ShopsViewModel
 import com.example.quickwallet.utils.Constants
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -54,6 +55,7 @@ import java.util.concurrent.Executors
 @Composable
 fun CameraView(
     viewModel: PhotoViewModel,
+    shopsViewModel: ShopsViewModel,
     navController: NavController,
     mode: PhotoViewMode
 ) {
@@ -67,12 +69,12 @@ fun CameraView(
 
     }
     AppTheme {
-        CameraPreview(navController, mode)
+        CameraPreview(viewModel, navController, mode)
     }
 }
 
 @Composable
-fun CameraPreview(navController: NavController, mode: PhotoViewMode) {
+fun CameraPreview(viewModel: PhotoViewModel, navController: NavController, mode: PhotoViewMode) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -80,6 +82,9 @@ fun CameraPreview(navController: NavController, mode: PhotoViewMode) {
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxSize()
     ) {
+        var imageCapture = remember { ImageCapture.Builder().build() }
+        val cameraExecutor = remember{Executors.newSingleThreadExecutor()}
+
         AndroidView(
             modifier = Modifier
                 .fillMaxSize(),
@@ -88,15 +93,21 @@ fun CameraPreview(navController: NavController, mode: PhotoViewMode) {
                 }
             },
             update = { previewView ->
-                val cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
                 val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
                 val barcodeAnalyser = BarCodeAnalyser { barcode ->
-                    Toast.makeText(context, barcode.rawValue, Toast.LENGTH_LONG)
+                    Log.d("ANALYZING_BARCODE", "trying to analyze")
+                    Log.d("ANALYZING_BARCODE", "${barcode.rawValue}")
+                    barcode.rawValue?.let {
+                        viewModel.obBarcodeDataChange(it)
+                    }
                 }
+
+                imageCapture = ImageCapture.Builder()
+                    .setTargetRotation(previewView.display.rotation)
+                    .build()
+
                 val useCase: UseCase = when (mode) {
-                    PhotoViewMode.IMAGE_CAPTURE -> ImageCapture.Builder()
-                        .setTargetRotation(previewView.display.rotation)
-                        .build()
+                    PhotoViewMode.IMAGE_CAPTURE -> imageCapture
                     PhotoViewMode.SCANNING -> getImageAnalysis(cameraExecutor, barcodeAnalyser)
                 }
 
@@ -108,30 +119,16 @@ fun CameraPreview(navController: NavController, mode: PhotoViewMode) {
         )
         TransparentClipLayout(
             modifier = Modifier.fillMaxSize(),
-            width = 300.dp,
-            height = 200.dp,
-            offsetY = 150.dp
+            width = 316.dp,
+            height = 186.dp,
+            offsetY = 200.dp
         )
         if (mode == PhotoViewMode.IMAGE_CAPTURE) {
-            PhotoButton()
+            PhotoButton(imageCapture,cameraExecutor,viewModel::onTakePhoto,)
         }
     }
 
 }
-
-@Composable
-fun CardViewPreviewBox(content: @Composable() (ColumnScope.() -> Unit)) {
-    Card(
-        modifier = Modifier
-            .requiredWidth(316.dp)
-            .requiredHeight(189.dp),
-        border = BorderStroke(2.dp, MaterialTheme.colors.primary),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
-    ) {
-        content
-    }
-}
-
 
 fun previewViewConfig(context: Context): PreviewView {
 
@@ -160,11 +157,6 @@ fun bindPreview(
         .build().apply {
             setSurfaceProvider(previewView.surfaceProvider)
         }
-//    val useCaseGroup = UseCaseGroup.Builder()
-//        .addUseCase(preview)
-//        .addUseCase(useCases)
-//        .setViewPort(viewPort)
-//        .build()
     try {
         cameraProvider.unbindAll()
         cameraProvider.bindToLifecycle(
@@ -179,11 +171,19 @@ fun bindPreview(
 }
 
 @Composable
-fun PhotoButton() {
+fun PhotoButton(
+    imageCapture: ImageCapture,
+    executorService: ExecutorService,
+    takePhoto: (ImageCapture, ExecutorService, () -> Unit) -> Unit,
+    action: () -> Unit
+) {
     IconButton(
         modifier = Modifier
             .padding(bottom = 20.dp),
         onClick = {
+            takePhoto(imageCapture, executorService) {
+                action()
+            }
             Log.d(Constants.cameraPreviewLogTag, "take photo btn was clicked")
         },
         content = {
@@ -235,7 +235,7 @@ fun TransparentClipLayout(
                     y = offsetInPx
                 ),
                 size = Size(widthInPx, heightInPx),
-                cornerRadius = CornerRadius(30f,30f),
+                cornerRadius = CornerRadius(30f, 30f),
                 color = Color.Transparent,
                 blendMode = BlendMode.Clear
             )
