@@ -1,5 +1,4 @@
 import android.annotation.SuppressLint
-import android.media.Image
 import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy

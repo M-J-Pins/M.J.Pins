@@ -1,8 +1,8 @@
 package com.example.quickwallet.di
 
-import com.example.quickwallet.network.services.auth.AuthService
 import com.example.quickwallet.network.model.AuthDataMapper
 import com.example.quickwallet.network.model.PhoneNumberMapper
+import com.example.quickwallet.network.services.auth.AuthService
 import com.example.quickwallet.network.services.card.CardService
 import com.example.quickwallet.network.services.shops.ShopsService
 import com.example.quickwallet.repository.AuthRepository

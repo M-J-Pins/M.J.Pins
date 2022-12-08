@@ -19,7 +19,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -36,7 +35,6 @@ import androidx.navigation.NavController
 import com.example.compose.AppTheme
 import com.example.quickwallet.R
 import com.example.quickwallet.presentation.navigation.Screen
-import com.example.quickwallet.presentation.ui.theme.fontBold
 import com.example.quickwallet.presentation.viewmodel.ActivityViewModel
 import com.example.quickwallet.presentation.viewmodel.AuthViewModel
 import com.example.quickwallet.utils.PhoneNumberVisualTransformation

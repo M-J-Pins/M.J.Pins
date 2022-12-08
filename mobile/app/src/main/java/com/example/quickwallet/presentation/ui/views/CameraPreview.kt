@@ -4,23 +4,19 @@ import BarCodeAnalyser
 import android.Manifest
 import android.content.Context
 import android.util.Log
+import android.util.Rational
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Lens
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,8 +50,9 @@ import java.util.concurrent.Executors
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CameraView(
-    viewModel: PhotoViewModel,
+    photoViewModel: PhotoViewModel,
     shopsViewModel: ShopsViewModel,
+    token: String,
     navController: NavController,
     mode: PhotoViewMode
 ) {
@@ -69,12 +66,18 @@ fun CameraView(
 
     }
     AppTheme {
-        CameraPreview(viewModel, navController, mode)
+        CameraPreview(photoViewModel, shopsViewModel, token, navController, mode)
     }
 }
 
 @Composable
-fun CameraPreview(viewModel: PhotoViewModel, navController: NavController, mode: PhotoViewMode) {
+fun CameraPreview(
+    viewModel: PhotoViewModel,
+    shopsViewModel: ShopsViewModel,
+    token: String,
+    navController: NavController,
+    mode: PhotoViewMode
+) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -83,48 +86,61 @@ fun CameraPreview(viewModel: PhotoViewModel, navController: NavController, mode:
         modifier = Modifier.fillMaxSize()
     ) {
         var imageCapture = remember { ImageCapture.Builder().build() }
-        val cameraExecutor = remember{Executors.newSingleThreadExecutor()}
+        val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
 
-        AndroidView(
-            modifier = Modifier
-                .fillMaxSize(),
-            factory = { AndroidViewContext ->
-                previewViewConfig(context = AndroidViewContext).apply {
-                }
-            },
-            update = { previewView ->
-                val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
-                val barcodeAnalyser = BarCodeAnalyser { barcode ->
-                    Log.d("ANALYZING_BARCODE", "trying to analyze")
-                    Log.d("ANALYZING_BARCODE", "${barcode.rawValue}")
-                    barcode.rawValue?.let {
-                        viewModel.obBarcodeDataChange(it)
+
+        Box(modifier = Modifier
+            .requiredHeight(186.dp)
+            .requiredWidth(316.dp)
+            .border(
+                width = 2.dp,
+                color = Color.Red
+            )
+        )
+            {
+                AndroidView(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    factory = { AndroidViewContext ->
+                        previewViewConfig(context = AndroidViewContext).apply {
+                        }
+                    },
+                    update = { previewView ->
+                        val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+                        val barcodeAnalyser = BarCodeAnalyser { barcode ->
+                            Log.d("ANALYZING_BARCODE", "trying to analyze")
+                            Log.d("ANALYZING_BARCODE", "${barcode.rawValue}")
+                            barcode.rawValue?.let {
+                                viewModel.obBarcodeDataChange(it)
+                            }
+                        }
+
+                        cameraProviderFuture.addListener({
+
+                            imageCapture = ImageCapture.Builder()
+                                .setTargetRotation(previewView.display.rotation)
+                                .build()
+
+                            val useCase: UseCase = when (mode) {
+                                PhotoViewMode.IMAGE_CAPTURE -> imageCapture
+                                PhotoViewMode.SCANNING -> getImageAnalysis(cameraExecutor, barcodeAnalyser)
+                            }
+
+                            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+                            bindPreview(cameraProvider, previewView, lifecycleOwner, useCase)
+                        }, ContextCompat.getMainExecutor(context))
                     }
-                }
-
-                imageCapture = ImageCapture.Builder()
-                    .setTargetRotation(previewView.display.rotation)
-                    .build()
-
-                val useCase: UseCase = when (mode) {
-                    PhotoViewMode.IMAGE_CAPTURE -> imageCapture
-                    PhotoViewMode.SCANNING -> getImageAnalysis(cameraExecutor, barcodeAnalyser)
-                }
-
-                cameraProviderFuture.addListener({
-                    val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-                    bindPreview(cameraProvider, previewView, lifecycleOwner, useCase)
-                }, ContextCompat.getMainExecutor(context))
-            }
-        )
-        TransparentClipLayout(
-            modifier = Modifier.fillMaxSize(),
-            width = 316.dp,
-            height = 186.dp,
-            offsetY = 200.dp
-        )
+                )
+        }
         if (mode == PhotoViewMode.IMAGE_CAPTURE) {
-            PhotoButton(imageCapture,cameraExecutor,viewModel::onTakePhoto,)
+            PhotoButton(
+                imageCapture = imageCapture,
+                executorService = cameraExecutor,
+                token = token,
+                navController = navController,
+                takePhoto = viewModel::onTakePhoto,
+                action = shopsViewModel::sendMostSimilarity
+            )
         }
     }
 
@@ -157,13 +173,20 @@ fun bindPreview(
         .build().apply {
             setSurfaceProvider(previewView.surfaceProvider)
         }
+    val viewPort = ViewPort.Builder(Rational(316, 186), preview.targetRotation)
+        .build()
+    val useCaseGroup = UseCaseGroup.Builder()
+        .addUseCase(preview)
+        .addUseCase(useCases)
+        .setViewPort(viewPort)
+        .build()
+
     try {
         cameraProvider.unbindAll()
         cameraProvider.bindToLifecycle(
             lifecycleOwner,
             cameraSelector,
-            preview,
-            useCases
+            useCaseGroup
         )
     } catch (e: Exception) {
         Log.d(Constants.cameraPreviewLogTag, "CameraPreview: ${e.localizedMessage}")
@@ -174,17 +197,18 @@ fun bindPreview(
 fun PhotoButton(
     imageCapture: ImageCapture,
     executorService: ExecutorService,
-    takePhoto: (ImageCapture, ExecutorService, () -> Unit) -> Unit,
-    action: () -> Unit
+    token: String,
+    navController: NavController,
+    takePhoto: (ImageCapture, ExecutorService, String, (String, ByteArray) -> Unit) -> Unit,
+    action: (String, ByteArray) -> Unit
 ) {
     IconButton(
         modifier = Modifier
             .padding(bottom = 20.dp),
         onClick = {
-            takePhoto(imageCapture, executorService) {
-                action()
-            }
             Log.d(Constants.cameraPreviewLogTag, "take photo btn was clicked")
+            takePhoto(imageCapture, executorService, token, action)
+//            navController.navigate(Scre)
         },
         content = {
             Icon(

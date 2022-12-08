@@ -1,16 +1,10 @@
 package com.example.quickwallet.network.services.auth.impl
 
 import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.liveData
-import com.example.quickwallet.network.ServiceBuilder
 import com.example.quickwallet.network.api.AuthApi
-import com.example.quickwallet.network.services.auth.AuthService
 import com.example.quickwallet.network.model.AuthDataDto
 import com.example.quickwallet.network.model.PhoneNumberDto
-import com.example.quickwallet.network.response.AuthPhoneResponse
+import com.example.quickwallet.network.services.auth.AuthService
 import com.example.quickwallet.presentation.BaseApplication
 import com.example.quickwallet.storage.UserPersistentData
 import com.example.quickwallet.utils.Constants

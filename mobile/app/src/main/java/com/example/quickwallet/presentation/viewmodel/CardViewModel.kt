@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.quickwallet.domain.model.Card
 import com.example.quickwallet.presentation.BaseApplication
 import com.example.quickwallet.repository.CardRepository
-import com.example.quickwallet.repository.ShopsRepository
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import dagger.hilt.android.lifecycle.HiltViewModel

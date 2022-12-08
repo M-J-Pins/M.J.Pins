@@ -1,6 +1,5 @@
 package com.example.quickwallet.presentation
 
-import android.Manifest
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -35,8 +34,6 @@ import com.example.quickwallet.presentation.navigation.bottomNavigationScreens
 import com.example.quickwallet.presentation.ui.views.*
 import com.example.quickwallet.presentation.viewmodel.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -60,6 +57,9 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val authViewModel by viewModels<AuthViewModel>()
             val cardViewModel by viewModels<CardViewModel>()
+            val photoViewModel = hiltViewModel<PhotoViewModel>()
+            val shopsViewModel = hiltViewModel<ShopsViewModel>()
+
 
             makeStatusBarTransparent()
 
@@ -141,7 +141,7 @@ class MainActivity : ComponentActivity() {
 //                    if (activityViewModel.isFirstExecution.value)
 //                        Screen.AuthScreens.AuthStart.route
 //                    else Screen.QuickWallet.QuickCards.route
-                    Screen.QuickWallet.AddCard.route
+                    Screen.QuickWallet.ScanCardFrontSurfaceScreen.route
 
                 ) {
                     composable(Screen.AuthScreens.AuthStart.route) {
@@ -173,12 +173,13 @@ class MainActivity : ComponentActivity() {
                             cardViewModel
                         )
                     }
-                    composable(Screen.QuickWallet.AddCard.route) {
-                        val viewModel = hiltViewModel<PhotoViewModel>()
-                        CameraView(
-                            navController = navController,
-                            mode = PhotoViewMode.SCANNING,
-                            viewModel = viewModel
+                    composable(Screen.QuickWallet.ScanCardFrontSurfaceScreen.route) {
+                        ScanCardFrontSurface(
+                            photoViewModel,
+                            shopsViewModel,
+                            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFhNGFhYjExLTcxYjktNGQ2Zi05N2YyLTgzYjM5YjAzOWZiMyIsImV4cCI6MTY3MzEyMzg0NH0.gxjk-K6OU8nXNTSbTXhDXuPMtW_b59lRpvCRpAWdy-4",
+                            navController,
+                            PhotoViewMode.IMAGE_CAPTURE
                         )
                     }
 

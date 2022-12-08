@@ -1,18 +1,14 @@
 package com.example.quickwallet.di
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import com.example.quickwallet.presentation.BaseApplication
 import com.example.quickwallet.storage.UserPersistentData
 import com.example.quickwallet.storage.UserPersistentDataProvider
-import com.example.quickwallet.utils.Constants
-
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Module

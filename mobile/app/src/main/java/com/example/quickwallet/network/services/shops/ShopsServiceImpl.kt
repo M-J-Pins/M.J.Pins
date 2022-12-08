@@ -5,9 +5,6 @@ import com.example.quickwallet.network.api.ShopsApi
 import com.example.quickwallet.network.response.toShop
 import com.example.quickwallet.utils.binaryDataToMultipartBodyPart
 
-import okhttp3.MediaType
-import okhttp3.RequestBody
-
 class ShopsServiceImpl(
     private val retrofit: ShopsApi
 ) : ShopsService {

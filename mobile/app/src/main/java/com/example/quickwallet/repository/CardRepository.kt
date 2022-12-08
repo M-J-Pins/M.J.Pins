@@ -1,7 +1,6 @@
 package com.example.quickwallet.repository
 
 import com.example.quickwallet.domain.model.Card
-import java.util.*
 
 interface CardRepository {
     suspend fun addUnknownCard(token: String,barcodeData: String,note: String,shopName: String,category: String): Card?

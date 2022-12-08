@@ -6,7 +6,6 @@ import com.example.quickwallet.network.request.card.StandardCardRequest
 import com.example.quickwallet.network.request.card.UnknownCardRequest
 import com.example.quickwallet.network.services.card.CardService
 import com.example.quickwallet.repository.CardRepository
-import java.util.*
 
 class CardRepositoryImpl(
     private val cardService: CardService

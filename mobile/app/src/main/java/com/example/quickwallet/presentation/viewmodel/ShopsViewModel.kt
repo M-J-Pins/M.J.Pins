@@ -9,10 +9,12 @@ import com.example.quickwallet.domain.model.Shop
 import com.example.quickwallet.presentation.BaseApplication
 import com.example.quickwallet.repository.ShopsRepository
 import com.example.quickwallet.utils.Constants
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class ShopsViewModel
 @Inject constructor(
     private val shopsRepository: ShopsRepository,
@@ -26,6 +28,7 @@ class ShopsViewModel
         viewModelScope.launch(Dispatchers.IO){
             shopsRepository.getMostSimilarity(token,data)?.let {
                 mostSimilarShop.value = it
+                Log.d(Constants.shopsViewModelLogTag, it.name)
             }
         }
     }

@@ -4,7 +4,9 @@ import android.Manifest
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -12,7 +14,6 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.example.compose.AppTheme
-import com.example.quickwallet.domain.model.Card
 import com.example.quickwallet.presentation.viewmodel.CardViewModel
 import com.example.quickwallet.utils.glide.DEFAULT_RECIPE_IMAGE
 import com.example.quickwallet.utils.glide.loadPicture
@@ -20,7 +21,6 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.VerticalPager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(
     ExperimentalPermissionsApi::class, ExperimentalPagerApi::class
