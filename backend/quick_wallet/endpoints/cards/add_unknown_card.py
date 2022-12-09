@@ -34,7 +34,6 @@ async def add_unknown_card(
         example={
             "token": "your jwt token",
             "barcode_data": "10398475822",
-            "note": "My new card",
             "category": "SPORT",
             "shop_name": "Alpha",
         },

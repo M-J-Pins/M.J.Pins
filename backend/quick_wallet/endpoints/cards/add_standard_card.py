@@ -35,7 +35,6 @@ async def add_standard_card(
         example={
             "token": "your jwt token",
             "barcode_data": "10398475822",
-            "note": "My new card",
             "shop_id": "bd65600d-8669-4903-8a14-af88203add38",
         },
     ),
