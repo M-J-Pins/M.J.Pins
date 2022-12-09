@@ -51,7 +51,7 @@ async def delete_card(
     if db_card is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    if db_card.owner_id != user_id:
+    if str(db_card.owner_id) != str(user_id):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
     await Card.delete(db, id=card_id)

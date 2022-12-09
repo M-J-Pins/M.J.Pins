@@ -39,7 +39,7 @@ class CardManager:
                 category=category,
             )
         if type == CardTypeEnum.STANDARD:
-            db_shop: Shop = await Shop.get(db, shop_id=shop_id)
+            db_shop: Shop = await Shop.get(db, id=shop_id)
             new_card = await Card.create(
                 db,
                 type=type,

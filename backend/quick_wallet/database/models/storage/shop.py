@@ -10,6 +10,7 @@ class ShopCategoryEnum(enum.Enum):
     ANY = "Разное"
     FOOD = "Продукты"
     RESTAURANTS = "Рестораны"
+    ELECTRONICS = "Техника"
     CLOTHES = "Одежда"
     SPORT = "Спорт"
     BEAUTY = "Красота"

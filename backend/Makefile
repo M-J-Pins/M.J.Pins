@@ -25,5 +25,11 @@ migrate:  ##@Database Do all migrations in database
 	cd $(APPLICATION_NAME)/database && alembic upgrade head
 
 deploy:
-	gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
+	gunicorn -k uvicorn.workers.UvicornWorker -b "0.0.0.0:8000" quick_wallet.__main__:app
+
+test:
+	poetry run python3 -m pytest --verbosity=2 --showlocals --log-level=DEBUG
+
+test-cov:
+	poetry run python3 -m pytest --verbosity=2 --showlocals --log-level=DEBUG --cov=quick_wallet
 

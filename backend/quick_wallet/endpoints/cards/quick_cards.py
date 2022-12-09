@@ -56,14 +56,18 @@ async def get_quick_cards(
     position: Point = Point(request.longitude, request.latitude)
     card_dist_list: List[CardDist] = []
 
-    db_standard_cards: List[Card] = await Card.get_all(db, owner_id=user_id, type=CardTypeEnum.STANDARD)
+    db_standard_cards: List[Card] = await Card.get_all(
+        db, owner_id=user_id, type=CardTypeEnum.STANDARD
+    )
     for card in db_standard_cards:
         cur_dist: float = MapSearchManager.distance_to_nearest_shop(
             position, card.map_search_string, get_settings().SEARCH_RADIUS
         )
         card_dist_list.append(CardDist(card, cur_dist))
 
-    db_unknown_cards: List[Card] = await Card.get_all(db, owner_id=user_id, type=CardTypeEnum.UNKNOWN)
+    db_unknown_cards: List[Card] = await Card.get_all(
+        db, owner_id=user_id, type=CardTypeEnum.UNKNOWN
+    )
     for card in db_unknown_cards:
         cur_dist: float = MapSearchManager.distance_to_nearest_shop(
             position, card.shop_name, get_settings().SEARCH_RADIUS
