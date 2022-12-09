@@ -62,6 +62,12 @@ object AppDependencies {
 
     private const val libphonenumber = "com.googlecode.libphonenumber:libphonenumber:${Versions.libPhone}"
 
+    private const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
+
+    private const val zxing = "com.google.zxing:core:3.3.0"
+
+    private const val logging = "com.squareup.okhttp3:logging-interceptor:4.2.1"
+
     val appLibs = listOf(
         kotlinStdLib,
         coreKtx,
@@ -90,7 +96,10 @@ object AppDependencies {
         mt3class,
         glide,
         constrainLayout,
-        libphonenumber
+        libphonenumber,
+        coroutines,
+        zxing,
+        logging
     )
 
     val kaptLibs = listOf(hiltCompiler)

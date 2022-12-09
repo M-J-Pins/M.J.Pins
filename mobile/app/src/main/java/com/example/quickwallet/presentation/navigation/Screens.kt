@@ -12,6 +12,7 @@ sealed class Screen(val route: String, val title: String) {
         object MyCards : QuickWallet("my-cards", "MyCards")
         object Wallet : QuickWallet("wallet", "Wallet")
         object AddCard : QuickWallet("add-card", "AddCard")
+        object ScanCardBarcodeData: QuickWallet("scan-card-barcode-data", "ScanCardBarcodeData")
         object ScanCardFrontSurfaceScreen: QuickWallet("scan-card-front-surface-screen", "ScanCardFrontSurfaceScreen")
     }
 }

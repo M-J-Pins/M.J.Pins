@@ -28,6 +28,7 @@ import com.example.compose.AppTheme
 import com.example.quickwallet.R
 import com.example.quickwallet.domain.model.cards
 import com.example.quickwallet.presentation.viewmodel.CardViewModel
+import com.example.quickwallet.presentation.viewmodel.ShopsViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class, ExperimentalPagerApi::class)
@@ -35,7 +36,8 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 fun MyCardsView(
     token: String,
     navController: NavController,
-    cardViewModel: CardViewModel
+    cardViewModel: CardViewModel,
+    shopsViewModel: ShopsViewModel
 ) {
     AppTheme {
         Column(
@@ -47,8 +49,8 @@ fun MyCardsView(
             Spacer(modifier = Modifier.height(8.dp))
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = cardViewModel.searchText.value,
-                onValueChange = { cardViewModel.onSearchTextChanged(it) },
+                value = "",
+                onValueChange = {},
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search, "",

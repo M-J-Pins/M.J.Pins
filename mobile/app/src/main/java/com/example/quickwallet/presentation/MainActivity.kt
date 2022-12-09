@@ -1,5 +1,6 @@
 package com.example.quickwallet.presentation
 
+import android.Manifest
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -9,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.CreditCard
@@ -34,6 +36,7 @@ import com.example.quickwallet.presentation.navigation.bottomNavigationScreens
 import com.example.quickwallet.presentation.ui.views.*
 import com.example.quickwallet.presentation.viewmodel.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -57,8 +60,6 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val authViewModel by viewModels<AuthViewModel>()
             val cardViewModel by viewModels<CardViewModel>()
-            val photoViewModel = hiltViewModel<PhotoViewModel>()
-            val shopsViewModel = hiltViewModel<ShopsViewModel>()
 
 
             makeStatusBarTransparent()
@@ -137,11 +138,11 @@ class MainActivity : ComponentActivity() {
             }) { scaffoldPadding ->
                 NavHost(
                     modifier = Modifier.padding(scaffoldPadding), navController = navController,
-                    startDestination =
-                    if (activityViewModel.isFirstExecution.value)
-                        Screen.AuthScreens.AuthStart.route
-                    else Screen.QuickWallet.QuickCards.route
-//                    Screen.QuickWallet.QuickCards.route
+                    startDestination = "test"
+//                    if (activityViewModel.isFirstExecution.value)
+//                        Screen.AuthScreens.AuthStart.route
+//                    else Screen.QuickWallet.QuickCards.route
+////                    Screen.QuickWallet.QuickCards.route
 
                 ) {
                     composable(Screen.AuthScreens.AuthStart.route) {
@@ -161,26 +162,45 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(Screen.QuickWallet.QuickCards.route) {
-                        LaunchedEffect(Unit) {
-                            cardViewModel.getQuickCards(activityViewModel.accessToken.value)
+                        val locationPermissionState =
+                            rememberMultiplePermissionsState(
+                                listOf(
+                                    Manifest.permission.ACCESS_FINE_LOCATION,
+                                    Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION
+                                )
+                            )
+                        if (!locationPermissionState.allPermissionsGranted) {
+                            LaunchedEffect(Unit) {
+                                locationPermissionState.launchMultiplePermissionRequest()
+                            }
                         }
-                        QuickCardsView(cardViewModel, activityViewModel.accessToken.value)
+//                        LaunchedEffect(Unit) {
+//                            cardViewModel.getQuickCards("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFhNGFhYjExLTcxYjktNGQ2Zi05N2YyLTgzYjM5YjAzOWZiMyIsImV4cCI6MTY3MzE0NTg4NH0.tXpKNAwSitYjahj9PzM4cBEH7nhqxSohMEGeVJb6SJU")
+//                        }
+                        QuickCardsView(
+                            cardViewModel,
+                            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFhNGFhYjExLTcxYjktNGQ2Zi05N2YyLTgzYjM5YjAzOWZiMyIsImV4cCI6MTY3MzE0NTg4NH0.tXpKNAwSitYjahj9PzM4cBEH7nhqxSohMEGeVJb6SJU"
+                        )
                     }
                     composable(Screen.QuickWallet.MyCards.route) {
-                        MyCardsView(
-                            activityViewModel.accessToken.value,
-                            navController,
-                            cardViewModel
-                        )
+
                     }
                     composable(Screen.QuickWallet.ScanCardFrontSurfaceScreen.route) {
-                        ScanCardFrontSurface(
-                            photoViewModel,
-                            shopsViewModel,
-                            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFhNGFhYjExLTcxYjktNGQ2Zi05N2YyLTgzYjM5YjAzOWZiMyIsImV4cCI6MTY3MzEyMzg0NH0.gxjk-K6OU8nXNTSbTXhDXuPMtW_b59lRpvCRpAWdy-4",
-                            navController,
-                            PhotoViewMode.IMAGE_CAPTURE
-                        )
+//                        CameraCaptureView(
+//                            shopsViewModel,
+//                            navController,
+//                            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFhNGFhYjExLTcxYjktNGQ2Zi05N2YyLTgzYjM5YjAzOWZiMyIsImV4cCI6MTY3MzE0NTg4NH0.tXpKNAwSitYjahj9PzM4cBEH7nhqxSohMEGeVJb6SJU"
+//                        )
+                    }
+                    composable("test"){
+
+//                        CameraCaptureView(
+//                            shopsViewModel,
+//                            navController,
+//                            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhhNmQ0ZDI1LWRiZGYtNGE1MC05YTY1LTY3YjA3NWJjYWU4OCIsImV4cCI6MTY3MzE1MDYxNn0.CHuIXK4n6PWpk9MH-NiJ3y9dPr3vAh5vd39wp24mi0E"
+//
+//                        )
                     }
 
                 }

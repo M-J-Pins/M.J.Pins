@@ -7,6 +7,4 @@ data class StandardCardRequest(
     val shopId: String,
     @Named("barcode_data")
     val barcodeData: String,
-    @Named("note")
-    val note: String
 )

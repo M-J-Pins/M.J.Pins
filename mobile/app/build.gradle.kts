@@ -64,6 +64,8 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling:1.3.0")
     implementation("androidx.compose.ui:ui-tooling-preview:1.3.0")
 
+    implementation("com.squareup.okhttp3:logging-interceptor:4.2.1")
+
     runtimeOnly("dev.chrisbanes.snapper:snapper:0.3.0")
     runtimeOnly("com.google.android.material:material:1.6.1")
     kapt(AppDependencies.kaptLibs)
