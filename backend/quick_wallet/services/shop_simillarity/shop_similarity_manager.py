@@ -89,7 +89,12 @@ class ShopSimilarityManager:
 
     @staticmethod
     def count_text_sim(text1: str, text2: str) -> float:
-        return compare(text1, text2)
+        r = 0
+        try:
+            r = compare(text1, text2)
+        except:
+            pass
+        return r
 
     @staticmethod
     def count_color_sim(color1: ColorRGB, color2: ColorRGB) -> float:
