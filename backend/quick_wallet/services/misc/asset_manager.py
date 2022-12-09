@@ -23,8 +23,10 @@ class AssetManager:
 
     @staticmethod
     def save_image(
-        image: ByteString, filename: str = random_word(10), gray_duplicate: bool = False
+        image: ByteString, filename: str = "", gray_duplicate: bool = False
     ) -> str:
+        if filename == "":
+            filename = random_word(10)
         path_to_file = f"assets/{filename}.jpg"
         with open(path_to_file, "wb") as file:
             file.write(image)
