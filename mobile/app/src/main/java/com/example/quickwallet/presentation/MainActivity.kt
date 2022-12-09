@@ -34,6 +34,8 @@ import com.example.quickwallet.R
 import com.example.quickwallet.presentation.navigation.Screen
 import com.example.quickwallet.presentation.navigation.bottomNavigationScreens
 import com.example.quickwallet.presentation.ui.views.*
+import com.example.quickwallet.presentation.ui.views.addcard.AddCardData
+import com.example.quickwallet.presentation.ui.views.camera.BarcodeCameraView
 import com.example.quickwallet.presentation.viewmodel.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -60,6 +62,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val authViewModel by viewModels<AuthViewModel>()
             val cardViewModel by viewModels<CardViewModel>()
+            val shopsViewModel = hiltViewModel<ShopsViewModel>()
 
 
             makeStatusBarTransparent()
@@ -142,7 +145,6 @@ class MainActivity : ComponentActivity() {
 //                    if (activityViewModel.isFirstExecution.value)
 //                        Screen.AuthScreens.AuthStart.route
 //                    else Screen.QuickWallet.QuickCards.route
-////                    Screen.QuickWallet.QuickCards.route
 
                 ) {
                     composable(Screen.AuthScreens.AuthStart.route) {
@@ -194,13 +196,14 @@ class MainActivity : ComponentActivity() {
 //                        )
                     }
                     composable("test"){
+//                        val shopsViewModel = hiltViewModel<ShopsViewModel>()
+//                        AddCardData(cardViewModel = cardViewModel, shopsViewModel =shopsViewModel )
+                        BarcodeCameraView(cardViewModel = cardViewModel, navController = navController)
 
-//                        CameraCaptureView(
-//                            shopsViewModel,
-//                            navController,
-//                            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhhNmQ0ZDI1LWRiZGYtNGE1MC05YTY1LTY3YjA3NWJjYWU4OCIsImV4cCI6MTY3MzE1MDYxNn0.CHuIXK4n6PWpk9MH-NiJ3y9dPr3vAh5vd39wp24mi0E"
-//
-//                        )
+
+                    }
+                    composable(Screen.QuickWallet.AddCard.route){
+                        AddCardData(cardViewModel = cardViewModel, shopsViewModel = shopsViewModel)
                     }
 
                 }

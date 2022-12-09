@@ -61,6 +61,7 @@ fun BarcodeCameraView(
         LaunchedEffect(key1 = cardViewModel.barcodeData) {
             if (cardViewModel.barcodeData.isNotEmpty()) {
                 navController.navigate(Screen.QuickWallet.AddCard.route)
+                Log.d("QQQQQQQQQQ",cardViewModel.barcodeData)
             }
         }
         TransparentClipLayout(

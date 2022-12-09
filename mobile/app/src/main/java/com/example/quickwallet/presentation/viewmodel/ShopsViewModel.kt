@@ -1,10 +1,7 @@
 package com.example.quickwallet.presentation.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quickwallet.domain.model.Shop
@@ -15,6 +12,7 @@ import com.example.quickwallet.repository.ShopsRepository
 import com.example.quickwallet.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -38,12 +36,20 @@ class ShopsViewModel
 
     var isLoading by mutableStateOf(true)
 
-    var shopCategories by mutableStateOf<MutableList<String>>(mutableListOf())
+    private val _shopCategories = mutableStateOf(emptyList<String>().toMutableList())
+    val shopCategories: State<List<String>> = _shopCategories
 
-    var shops by mutableStateOf<MutableList<ShopResponse>>(mutableListOf())
+    private val _shopCategoriesSelectedItem = mutableStateOf("")
+    val shopCategoriesSelectedItem: State<String> = _shopCategoriesSelectedItem
+
+
+    private val _shops = mutableStateOf(emptyList<ShopResponse>())
+    val shops: State<List<ShopResponse>> = _shops
 
     var mostSimilar by mutableStateOf(ShopResponse("", "", "", "", "", ""))
     var filepath by mutableStateOf("")
+
+
 
     fun fetchShopCategories() {
         isLoading = true
@@ -51,7 +57,7 @@ class ShopsViewModel
             val response = shopsRepository.getShopCategories()
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
-                    shopCategories = response.body()!!.categories.toMutableList()
+                    _shopCategories.value = response.body()!!.categories.toMutableList()
                     isLoading = false
                 } else {
                     onError("Error: ${response.message()}")
@@ -66,7 +72,7 @@ class ShopsViewModel
             val response = shopsRepository.getShops()
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
-                    shops = response.body()!!.toMutableList()
+                    _shops.value = response.body()!!.toMutableList()
                     isLoading = false
                 } else {
                     onError("Error: ${response.message()}")
@@ -99,6 +105,9 @@ class ShopsViewModel
         filepath = file.absolutePath
     }
 
+    fun onShopCategoryUpdate(data: String) {
+        _shopCategoriesSelectedItem.value = data
+    }
 
     fun onError(message: String) {
         isError = true

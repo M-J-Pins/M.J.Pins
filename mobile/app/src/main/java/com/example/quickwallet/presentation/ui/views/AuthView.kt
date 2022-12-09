@@ -211,27 +211,34 @@ fun SendCodeView(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                LaunchedEffect(key1 = viewModel.opt0.value){
+                LaunchedEffect(key1 = viewModel.opt0.value) {
                     if (viewModel.opt0.value.isNotEmpty()) {
                         focusManager.moveFocus(
                             focusDirection = FocusDirection.Next,
                         )
                     }
                 }
-                LaunchedEffect(key1 = viewModel.opt1.value){
+                LaunchedEffect(key1 = viewModel.opt1.value) {
                     if (viewModel.opt1.value.isNotEmpty()) {
                         focusManager.moveFocus(
                             focusDirection = FocusDirection.Next,
                         )
                     }
                 }
-                LaunchedEffect(key1 = viewModel.opt2.value){
+                LaunchedEffect(key1 = viewModel.opt2.value) {
                     if (viewModel.opt2.value.isNotEmpty()) {
                         focusManager.moveFocus(
                             focusDirection = FocusDirection.Next,
                         )
                     }
                 }
+                LaunchedEffect(key1 = viewModel.opt3.value) {
+                    if (viewModel.isAllCodeCellsFilled.value) {
+                        viewModel.sendPhoneAuth()
+                    }
+                }
+
+
 
                 CommonOtpTextField(
                     otp = viewModel.opt0.value,
@@ -278,7 +285,7 @@ fun SendCodeView(
             OutlinedButton(
                 modifier = Modifier.align(Alignment.End),
                 onClick = {
-                    if (viewModel.isWrongCode.value) {
+                    if (viewModel.isWrongCode.value || viewModel.backOrderTimerTicks.value == 0) {
                         viewModel.sendPhoneNumber()
                     }
                 },
@@ -286,19 +293,11 @@ fun SendCodeView(
                 ConditionalText(ticks = viewModel.backOrderTimerTicks.value)
             }
 
-            checkFilledCells(
-                areFilled = viewModel.isAllCodeCellsFilled.value,
-                onSuccess = {
-                    viewModel.sendPhoneAuth()
-                    activityViewModel.fetchToken()
-                }
-            )
-
-            checkCodeResult(
-                isCodeError = viewModel.isWrongCode.value,
-                responseReceived = viewModel.isTokenReceived.value,
-                navController = navController
-            )
+//            checkCodeResult(
+//                isCodeError = viewModel.isWrongCode.value,
+//                responseReceived = viewModel.isTokenReceived.value,
+//                navController = navController
+//            )
         }
     }
 }
@@ -317,17 +316,6 @@ fun ConditionalText(ticks: Int) {
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.primary
         )
-    }
-}
-
-@Composable
-fun checkFilledCells(
-    areFilled: Boolean,
-    onSuccess: () -> Unit
-) {
-    if (areFilled) {
-        onSuccess()
-
     }
 }
 
@@ -357,7 +345,7 @@ fun CommonOtpTextField(
         onValueChange = {
             onOptChange(it, index)
         },
-        keyboardOptions =keyboardOptions,
+        keyboardOptions = keyboardOptions,
         shape = RoundedCornerShape(4.dp),
         modifier = Modifier
             .requiredSize(60.dp),
